@@ -1,823 +1,1596 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>EFECTO DOPPLER — Cuaderno Interactivo de Física</title>
-<meta name="description" content="Cuaderno interactivo sobre el Efecto Doppler: teoría, derivaciones, simulación y evaluación. Universidad Tecnológica de Pereira.">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script>window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['\\[','\\]'],['$$','$$']]},startup:{typeset:true}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
-<style>
-:root{--bg:linear-gradient(135deg,#0f0c29,#302b63,#24243e);--page-bg:#fdfdff;--text:#2c3e50;--heading:#1565c0;--accent:#1565c0;--accent2:#ff6b6b;--accent3:#00c9a7;--gold:#ffd700;--grid:rgba(100,149,237,0.05);--nav-bg:rgba(255,255,255,0.88);--font:'Inter',sans-serif;--font-serif:'Playfair Display',serif;--font-mono:'JetBrains Mono',monospace}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden}
-body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.7}
-#progress-bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:1000;transition:width .3s}
-#dark-toggle{position:fixed;top:12px;left:12px;z-index:1001;background:none;border:none;font-size:22px;cursor:pointer;color:var(--heading);opacity:.7}
-#dark-toggle:hover{opacity:1}
-#page-info{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:1001;font-size:12px;color:#aaa;opacity:.8;font-weight:500}
-body.dark{--bg:linear-gradient(135deg,#0a0a1a,#1a1a3e,#0f0f2e);--page-bg:rgba(20,25,45,.95);--text:#e0e8f0;--heading:#90caf9;--accent:#64b5f6;--accent2:#ff8a80;--accent3:#69f0ae;--grid:rgba(100,149,237,0.03);--nav-bg:rgba(15,20,40,0.92)}
-#book-container{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-#book{width:min(95vw,1100px);height:min(88vh,720px);perspective:2000px;position:relative;transform-style:preserve-3d}
-.spread{position:absolute;inset:0;display:none;opacity:0;transition:opacity .4s,transform .4s}
-.spread.active{display:flex;opacity:1}
-.spread.flip-out-fwd{display:flex!important;animation:flipFwd .5s ease-in forwards;transform-origin:left center}
-.spread.flip-in-fwd{display:flex!important;animation:flipInFwd .5s ease-out forwards;transform-origin:right center}
-.spread.flip-out-back{display:flex!important;animation:flipBack .5s ease-in forwards;transform-origin:right center}
-.spread.flip-in-back{display:flex!important;animation:flipInBack .5s ease-out forwards;transform-origin:left center}
-@keyframes flipFwd{0%{transform:perspective(2000px) rotateY(0);opacity:1}100%{transform:perspective(2000px) rotateY(-100deg);opacity:0}}
-@keyframes flipBack{0%{transform:perspective(2000px) rotateY(0);opacity:1}100%{transform:perspective(2000px) rotateY(100deg);opacity:0}}
-@keyframes flipInFwd{0%{transform:perspective(2000px) rotateY(100deg);opacity:0}100%{transform:perspective(2000px) rotateY(0);opacity:1}}
-@keyframes flipInBack{0%{transform:perspective(2000px) rotateY(-100deg);opacity:0}100%{transform:perspective(2000px) rotateY(0);opacity:1}}
-.page{flex:1;background:var(--page-bg);padding:30px 32px;overflow-y:auto;position:relative;box-shadow:2px 2px 20px rgba(0,0,0,.1);background-image:repeating-linear-gradient(var(--grid) 0 1px,transparent 1px 28px),repeating-linear-gradient(90deg,var(--grid) 0 1px,transparent 1px 28px);background-size:28px 28px;scrollbar-width:thin;border:1px solid rgba(255,255,255,.08)}
-.page::-webkit-scrollbar{width:5px}.page::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
-.page-left{border-radius:12px 0 0 12px;border-right:none}
-.page-right{border-radius:0 12px 12px 0;border-left:none}
-.page .page-num{position:absolute;bottom:8px;font-size:11px;color:var(--text);opacity:.4}
-.page-left .page-num{left:15px}.page-right .page-num{right:15px}
-.spiral{width:40px;display:flex;flex-direction:column;justify-content:space-around;align-items:center;background:linear-gradient(90deg,rgba(240,242,245,.3) 0%,#b0c4de 8%,#4a9edd 25%,#2575c4 40%,#1a6ab5 50%,#2575c4 60%,#4a9edd 75%,#b0c4de 92%,rgba(240,242,245,.3) 100%);border-radius:1px;flex-shrink:0;z-index:2;box-shadow:inset 0 0 8px rgba(0,0,0,.1)}
-.spiral-ring{width:38px;height:20px;border-radius:50%;background:linear-gradient(170deg,#e8e8e8 0%,#c0c0c0 8%,#a0a0a0 18%,#787878 35%,#606060 50%,#787878 65%,#a0a0a0 82%,#c8c8c8 92%,#e0e0e0 100%);box-shadow:0 4px 6px rgba(0,0,0,.35),0 -2px 3px rgba(255,255,255,.4);position:relative}
-.spiral-ring::before{content:"";position:absolute;inset:3px 6px;border-radius:50%;background:linear-gradient(175deg,#909090 0%,#b8b8b8 25%,#d8d8d8 45%,#c0c0c0 55%,#a0a0a0 75%,#808080 100%);box-shadow:inset 0 3px 5px rgba(0,0,0,.45)}
-.spiral-ring::after{content:"";position:absolute;top:2px;left:25%;width:50%;height:6px;background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,0));border-radius:50%}
-h2.section-title{font-family:var(--font);font-size:1.2em;color:var(--heading);font-weight:800;margin:16px 0 8px;padding:7px 12px;border-radius:10px;background:linear-gradient(135deg,rgba(21,101,192,.08),rgba(21,101,192,.02));border-left:4px solid var(--accent);display:flex;align-items:center;gap:8px;letter-spacing:.3px}
-h2.section-title i{font-size:.85em;opacity:.7}
-h3.sub-title{font-size:1em;color:var(--accent2);font-weight:700;margin:12px 0 5px;display:flex;align-items:center;gap:6px}
-h3.sub-title::before{content:'';width:4px;height:100%;min-height:14px;background:var(--accent2);border-radius:2px;display:inline-block}
-p{line-height:1.7;margin-bottom:.5rem;font-size:.88em}
-.def-box{background:linear-gradient(135deg,rgba(21,101,192,.06),rgba(21,101,192,.02));border-left:4px solid var(--accent);padding:10px 14px;border-radius:0 12px 12px 0;margin:8px 0;transition:transform .2s,box-shadow .2s}
-.def-box:hover{transform:translateX(4px);box-shadow:0 2px 12px rgba(21,101,192,.1)}
-.formula-box{border:2px solid rgba(21,101,192,.2);padding:12px;border-radius:14px;text-align:center;margin:10px 0;background:linear-gradient(135deg,rgba(21,101,192,.04),transparent)}
-.example-box{background:linear-gradient(135deg,rgba(0,201,167,.06),rgba(0,201,167,.02));border-left:4px solid var(--accent3);padding:10px 14px;border-radius:0 12px 12px 0;margin:8px 0;transition:transform .2s}
-.example-box:hover{transform:translateX(4px)}
-.note-box{background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.02));border-left:4px solid var(--gold);padding:10px 14px;border-radius:0 12px 12px 0;margin:8px 0;transition:transform .2s}
-.note-box:hover{transform:translateX(4px)}
-.warning-box{background:linear-gradient(135deg,rgba(255,107,107,.06),rgba(255,107,107,.02));border-left:4px solid var(--accent2);padding:10px 14px;border-radius:0 12px 12px 0;margin:8px 0}
-img.book-img{max-width:100%;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:5px 0}
-figcaption{text-align:center;font-size:.7em;color:var(--accent);font-style:italic;margin-bottom:5px}
-table.styled-table{width:100%;border-collapse:separate;border-spacing:0;margin:8px 0;font-size:.82em;border-radius:10px;overflow:hidden;box-shadow:0 1px 8px rgba(0,0,0,.06)}
-table.styled-table thead th{background:linear-gradient(135deg,var(--accent),#1976d2);color:#fff;padding:8px 10px;text-align:left;font-weight:600;font-size:.82em}
-table.styled-table tbody td{padding:6px 10px;border-bottom:1px solid rgba(0,0,0,.05)}
-table.styled-table tbody tr:hover{background:rgba(21,101,192,.06)}
-.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
-.compare-card{background:var(--page-bg);border-radius:8px;padding:8px;border-top:3px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.04);font-size:.88em}
-.compare-card:nth-child(2){border-top-color:var(--accent2)}
-.cover-page{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(160deg,#0a1628 0%,#1a2a4a 30%,#1565c0 60%,#0d47a1 100%)!important;color:#fff!important;background-image:none!important;position:relative;overflow:hidden}
-.cover-page::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Ccircle cx='80' cy='100' r='60' fill='none' stroke='rgba(255,255,255,.04)' stroke-width='2'/%3E%3Ccircle cx='80' cy='100' r='40' fill='none' stroke='rgba(255,255,255,.03)' stroke-width='2'/%3E%3Ccircle cx='300' cy='100' r='50' fill='none' stroke='rgba(255,255,255,.04)' stroke-width='2'/%3E%3C/svg%3E") repeat;background-size:400px 200px;animation:waveScroll 10s linear infinite;opacity:.8}
-@keyframes waveScroll{0%{background-position:0 0}100%{background-position:400px 0}}
-.cover-page::after{content:'';position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(transparent,rgba(10,22,40,.6));pointer-events:none}
-.cover-page h1{color:#fff;font-size:2.5em;text-shadow:0 3px 20px rgba(0,0,0,.4);position:relative;z-index:1;font-family:'Playfair Display',serif}
-.cover-page .subtitle{font-size:1.1em;opacity:.9;margin:6px 0 16px;border-bottom:2px solid rgba(255,255,255,.3);padding-bottom:8px;display:inline-block;position:relative;z-index:1;letter-spacing:1px}
-.cover-page .badge{background:rgba(255,255,255,.1);padding:8px 24px;border-radius:25px;font-weight:600;margin:10px 0;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);position:relative;z-index:1;transition:transform .3s}
-.cover-page .badge:hover{transform:scale(1.05)}
-.cover-page .author{margin-top:20px;font-size:.85em;opacity:.7;position:relative;z-index:1}
-.cover-wave{font-size:4em;margin-bottom:10px;opacity:.9;position:relative;z-index:1;animation:coverFloat 3s ease-in-out infinite}
-@keyframes coverFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.toc-item{padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .25s;margin-bottom:2px;border:1px solid transparent;font-size:.88em}
-.toc-item:hover{background:linear-gradient(135deg,rgba(21,101,192,.08),rgba(21,101,192,.03));border-color:rgba(21,101,192,.15);transform:translateX(6px)}
-.toc-num{background:linear-gradient(135deg,var(--accent),#1976d2);color:#fff;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.75em;font-weight:700;flex-shrink:0;box-shadow:0 2px 8px rgba(21,101,192,.25)}
-.toc-num.sim{background:linear-gradient(135deg,var(--accent2),#e53935)}
-.quiz-q{background:var(--page-bg);border-radius:8px;padding:8px;margin:5px 0;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.quiz-q h4{color:var(--accent);margin-bottom:4px;font-size:.82em}
-.quiz-opt{display:block;width:100%;padding:5px 8px;margin:2px 0;border-radius:8px;border:2px solid rgba(0,0,0,.06);cursor:pointer;transition:all .2s;font-size:.8em;text-align:left;background:none;color:var(--text);font-family:var(--font)}
-.quiz-opt:hover{border-color:var(--accent);background:rgba(21,101,192,.05)}
-.quiz-opt.correct{border-color:var(--accent3);background:rgba(0,201,167,.1);font-weight:700}
-.quiz-opt.wrong{border-color:var(--accent2);background:rgba(255,107,107,.1)}
-.quiz-feedback{margin-top:3px;font-size:.75em;display:none;color:var(--accent3)}
-details summary{color:var(--accent);cursor:pointer;font-weight:700;font-size:.8em}
-/* SVG SCIENTIST AVATARS */
-.sci-avatar{display:inline-block;width:40px;height:40px;border-radius:50%;overflow:visible;flex-shrink:0}
-.sci-avatar svg{width:100%;height:100%}
-.sci-avatar-lg{width:44px;height:44px}
-.sci-avatar-sm{width:32px;height:32px}
-@keyframes blinkEye{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
-.eye-blink{animation:blinkEye 4s ease-in-out infinite}
-.eye-blink-alt{animation:blinkEye 4s ease-in-out 2s infinite}
-.sci-pupil{transition:transform .15s ease-out}
-/* CHATBOT */
-#chat-toggle{position:fixed;bottom:80px;left:16px;width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#e8dfd0,#c9b896);border:3px solid #4a90d9;color:#333;font-size:22px;cursor:pointer;z-index:2001;box-shadow:0 4px 20px rgba(74,144,217,.4);transition:box-shadow .3s,transform .3s;overflow:visible;padding:0;display:flex;align-items:center;justify-content:center}
-#chat-toggle:hover{box-shadow:0 6px 25px rgba(74,144,217,.6);transform:scale(1.08)}
-#chat-bubble{position:fixed;bottom:140px;left:12px;background:#fff;border:1px solid #e0e0e0;border-radius:16px;padding:10px 14px;max-width:250px;font-size:.78em;line-height:1.4;color:#333;box-shadow:0 4px 20px rgba(0,0,0,.12);z-index:2000;opacity:0;transition:opacity .4s;pointer-events:none;font-style:italic}
-#chat-bubble.visible{opacity:1;pointer-events:auto}
-#chat-bubble::after{content:"";position:absolute;bottom:-8px;left:30px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid #fff}
-#chat-panel{position:fixed;left:16px;bottom:140px;width:400px;max-height:560px;background:linear-gradient(180deg,#3b5998 0%,#4a6fb5 8%,var(--page-bg) 8%);border-radius:18px;box-shadow:0 10px 50px rgba(0,0,0,.3);z-index:2002;display:none;flex-direction:column;overflow:hidden;border:none}
-#chat-panel.open{display:flex;animation:chatSlide .3s ease}
-@keyframes chatSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-#chat-header{padding:12px 16px 8px;background:linear-gradient(135deg,#3b5998,#4a6fb5);color:#fff;display:flex;align-items:center;gap:12px}
-#chat-header .sci-info{flex:1}
-#chat-header .sci-info h3{font-size:.95em;font-weight:700;margin:0}
-#chat-header .sci-info small{font-size:.7em;opacity:.8}
-#chat-header .header-actions button{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:background .2s}
-#chat-header .header-actions button:hover{background:rgba(255,255,255,.3)}
-#scientist-selector{display:flex;gap:4px;padding:6px 10px;border-bottom:1px solid rgba(0,0,0,.06);overflow-x:auto;scrollbar-width:none;background:rgba(59,89,152,.03)}
-.sci-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:3px 6px;border-radius:10px;border:2px solid transparent;cursor:pointer;transition:all .2s;background:none;font-size:.6em;font-weight:600;color:var(--text);opacity:.65}
-.sci-btn:hover,.sci-btn.active{border-color:#4a6fb5;opacity:1;background:rgba(59,89,152,.08)}
-.sci-btn .sci-emoji{font-size:1.8em}
-.sci-btn .sci-avatar-sm{margin-bottom:1px}
-#chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:220px;max-height:320px}
-.msg{max-width:85%;padding:10px 14px;border-radius:14px;font-size:.85em;line-height:1.5;animation:msgIn .3s ease;word-wrap:break-word}
-.msg.user{align-self:flex-end;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-bottom-right-radius:4px}
-.msg.bot{align-self:flex-start;background:#f0f2f5;color:#1c1e21;border-bottom-left-radius:4px}
-.msg .sci-name{font-weight:700;color:#3b5998;font-size:.72em;margin-bottom:3px;display:block}
-@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-#chat-input-area{padding:10px 12px;border-top:1px solid rgba(0,0,0,.08);display:flex;gap:8px}
-#chat-input{flex:1;padding:8px 14px;border-radius:20px;border:2px solid rgba(59,89,152,.15);font-size:.85em;outline:none;background:#f0f2f5;color:var(--text);font-family:var(--font)}
-#chat-input:focus{border-color:#4a6fb5}
-#chat-send{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#4a90d9,#3b5998);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s}
-#chat-send:hover{transform:scale(1.1)}
-#chat-suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border-top:1px solid rgba(0,0,0,.05)}
-.chat-suggest{padding:6px 12px;border-radius:16px;border:1px solid rgba(59,89,152,.2);font-size:.75em;cursor:pointer;background:none;color:var(--text);transition:all .2s;font-family:var(--font)}
-.chat-suggest:hover{background:rgba(59,89,152,.08);border-color:#4a6fb5}
-.typing-dots{display:flex;gap:4px;padding:8px;align-self:flex-start}
-.td{width:6px;height:6px;border-radius:50%;background:#6366f1;animation:tdb .6s infinite alternate}
-.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
-@keyframes tdb{to{transform:translateY(-6px);opacity:.3}}
-#api-key-section{padding:12px 14px;text-align:center;font-size:.8em;border-bottom:1px solid rgba(0,0,0,.06);background:rgba(59,89,152,.03)}
-#api-key-section input{width:100%;padding:8px 12px;border-radius:20px;border:2px solid rgba(59,89,152,.15);font-family:monospace;font-size:.85em;margin:6px 0;outline:none;background:#f0f2f5;color:var(--text)}
-#api-key-section button{background:linear-gradient(135deg,#4a90d9,#3b5998);color:#fff;border:none;padding:7px 20px;border-radius:20px;cursor:pointer;font-weight:600;transition:transform .2s}
-#api-key-section button:hover{transform:scale(1.05)}
-/* NAV */
-#nav-bar{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;padding:8px 16px;background:var(--nav-bg);border-radius:50px;box-shadow:0 8px 40px rgba(0,0,0,.18);backdrop-filter:blur(20px);z-index:1000;align-items:center;border:1px solid rgba(255,255,255,.12)}
-.nav-btn{width:42px;height:42px;border-radius:50%;border:none;background:linear-gradient(145deg,var(--accent),#1976d2);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;position:relative;overflow:hidden}
-.nav-btn:hover{transform:scale(1.12) translateY(-2px);box-shadow:0 6px 20px rgba(21,101,192,.45)}
-.nav-btn:active{transform:scale(.95)}
-.nav-btn:disabled{opacity:.25;cursor:not-allowed;transform:none;box-shadow:none}
-#zoom-controls{position:fixed;bottom:80px;right:16px;display:flex;flex-direction:column;gap:6px;z-index:999}
-#zoom-controls button{width:36px;height:36px;border-radius:50%;border:2px solid var(--accent);background:var(--nav-bg);color:var(--accent);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);transition:all .2s}
-#zoom-controls button:hover{background:var(--accent);color:#fff;transform:scale(1.1)}
-#zoom-level{font-size:10px;text-align:center;color:var(--text);opacity:.6;font-weight:700}
-#narrator-btn{position:fixed;bottom:80px;right:60px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#27ae60,#2ecc71);border:none;color:#fff;font-size:18px;cursor:pointer;z-index:1001;box-shadow:0 3px 15px rgba(39,174,96,.4);transition:all .3s;display:flex;align-items:center;justify-content:center}
-#narrator-btn:hover{transform:scale(1.1)}
-#narrator-btn.speaking{background:linear-gradient(135deg,#e74c3c,#c0392b);animation:nPulse 1s infinite}
-@keyframes nPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-#narrator-status{position:fixed;bottom:128px;right:42px;background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:6px 14px;font-size:.75em;color:#333;box-shadow:0 2px 12px rgba(0,0,0,.1);z-index:1000;opacity:0;transition:opacity .3s;pointer-events:none}
-#narrator-status.visible{opacity:1}
-@media(max-width:768px){#book{width:98vw;height:85vh}.page{padding:16px 14px;font-size:13px}.compare-grid{grid-template-columns:1fr}#chat-panel{width:calc(100vw - 32px);left:16px;bottom:120px;max-height:55vh}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>⚡ Simulador Efecto Doppler — Quantum Edition</title>
+    <meta name="description" content="Simulación interactiva avanzada del Efecto Doppler con cono de Mach, mapeo cromático y audio en tiempo real.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- Configuración Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        surface: 'var(--bg-surface)',
+                        canvas: 'var(--bg-canvas)',
+                        border: 'var(--border-color)'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    boxShadow: {
+                        'btn': '0 2px 4px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* --- Variables --- */
+        :root {
+            --bg-canvas: #f8fafc;
+            --bg-surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --slider-track: #e2e8f0;
+        }
+
+        .dark {
+            --bg-canvas: #030712;
+            --bg-surface: #111827;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --slider-track: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* --- Sliders Personalizados (Black Thumbs STRICT) --- */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: transparent;
+            cursor: pointer;
+            margin: 12px 0;
+        }
+
+        /* CHROME, SAFARI, EDGE */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #000000 !important; /* NEGRO PURO */
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            margin-top: -8px; 
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+        /* FIREFOX */
+        input[type=range]::-moz-range-thumb {
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #000000 !important; /* NEGRO PURO */
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        input[type=range]::-moz-range-thumb:hover { transform: scale(1.15); }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* --- Botones --- */
+        .btn-modern {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .btn-modern:active { transform: scale(0.96); }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        .btn-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .btn-header:hover {
+            background: var(--bg-canvas);
+            color: var(--text-main);
+            border-color: var(--border-color);
+        }
+
+        .btn-icon-glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .dark .btn-icon-glass {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Utilidades --- */
+        .resizer { width: 8px; cursor: col-resize; z-index: 20; display: flex; justify-content: center; align-items: center; }
+        .resizer-pill { width: 4px; height: 32px; background: var(--border-color); border-radius: 99px; transition: background 0.2s; }
+        .resizer:hover .resizer-pill { background: #3b82f6; }
+        
+        .modal-overlay { transition: opacity 0.3s ease, backdrop-filter 0.3s ease; backdrop-filter: blur(4px); }
+        .modal-content { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease; transform: scale(0.95) translateY(10px); opacity: 0; }
+        .modal-active .modal-content { transform: scale(1) translateY(0); opacity: 1; }
+        
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .theory-section h3 { color: #3b82f6; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem; border-left: 4px solid #3b82f6; padding-left: 10px; }
+        .theory-section p { margin-bottom: 1rem; line-height: 1.7; color: var(--text-main); text-align: justify; }
+        .theory-section ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+        .theory-section li { margin-bottom: 0.5rem; color: var(--text-main); }
+        .math-block { background: var(--bg-canvas); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); margin: 1.5rem 0; overflow-x: auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        
+        .style-btn { padding: 8px; border: 1px solid var(--border-color); border-radius: 8px; transition: all 0.2s; }
+        .style-btn:hover { background: var(--bg-canvas); }
+        .style-btn.active { border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+
+        /* --- Mach HUD --- */
+        .mach-hud { position: absolute; top: 90px; left: 24px; pointer-events: none; z-index: 5; }
+        .mach-pill { background: rgba(0,0,0,0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 10px 18px; display: flex; flex-direction: column; gap: 2px; }
+        .dark .mach-pill { background: rgba(15,23,42,0.85); }
+        .mach-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; }
+        .mach-value { font-family: 'Fira Code', monospace; font-size: 1.6rem; font-weight: 900; color: #f1f5f9; line-height: 1; }
+        .mach-value.subsonic { color: #34d399; text-shadow: 0 0 12px rgba(52,211,153,0.4); }
+        .mach-value.transonic { color: #fbbf24; text-shadow: 0 0 12px rgba(251,191,36,0.5); }
+        .mach-value.supersonic { color: #f43f5e; text-shadow: 0 0 16px rgba(244,63,94,0.6); animation: mach-pulse 0.6s ease-in-out infinite alternate; }
+        @keyframes mach-pulse { from { opacity: 0.8; } to { opacity: 1; transform: scale(1.03); } }
+        .regime-tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-top: 4px; width: fit-content; }
+        .regime-tag.sub { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+        .regime-tag.trans { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+        .regime-tag.super { background: rgba(244,63,94,0.15); color: #f43f5e; border: 1px solid rgba(244,63,94,0.3); }
+
+        /* --- Oscilloscope Modal --- */
+        .oscillo-container { background: #020617; border: 1px solid #334155; height: 280px; width: 100%; border-radius: 8px; position: relative; overflow: hidden; }
+        .oscillo-container::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(52,211,153,0.03) 3px, rgba(52,211,153,0.03) 4px); pointer-events: none; z-index: 1; }
+        #oscillo-canvas { width: 100%; height: 100%; display: block; }
+    </style>
 </head>
-<body class="dark">
-<div id="progress-bar" style="width:0%"></div>
-<button id="dark-toggle" onclick="document.body.classList.toggle('dark')" title="Modo oscuro"><i class="fas fa-moon"></i></button>
-<span id="page-info"></span>
-<div id="book-container">
-<div id="book">
+<body class="h-screen w-screen flex flex-col bg-[var(--bg-canvas)] text-[var(--text-main)] transition-colors duration-300 select-none">
 
-<!-- ═══════ SPREAD 0: PORTADA + ÍNDICE ═══════ -->
-<div class="spread active" data-spread="0">
-<div class="page page-left cover-page">
-<div class="cover-wave" style="filter:drop-shadow(0 0 20px rgba(255,255,255,.3))">🔊</div>
-<h1 style="font-size:2.2em;letter-spacing:2px;font-family:'Playfair Display',serif;color:#fff;position:relative;z-index:1">EFECTO DOPPLER</h1>
-<div class="subtitle">Principios, Aplicaciones y Avances</div>
-<div class="badge"><i class="fas fa-atom" style="margin-right:6px"></i> Cuaderno Interactivo</div>
-<div style="display:flex;gap:8px;margin:10px 0;position:relative;z-index:1"><span style="background:rgba(255,255,255,.1);padding:4px 10px;border-radius:15px;font-size:.7em;border:1px solid rgba(255,255,255,.15)"><i class="fas fa-flask"></i> Interactivo</span><span style="background:rgba(255,255,255,.1);padding:4px 10px;border-radius:15px;font-size:.7em;border:1px solid rgba(255,255,255,.15)"><i class="fas fa-robot"></i> IA Chat</span><span style="background:rgba(255,255,255,.1);padding:4px 10px;border-radius:15px;font-size:.7em;border:1px solid rgba(255,255,255,.15)"><i class="fas fa-chart-line"></i> Simulaci&oacute;n</span></div>
-<figure style="position:relative;z-index:1;max-width:240px"><img src="IMAGENES/PORTADA.jpeg" alt="Portada Efecto Doppler" class="book-img" style="max-height:180px;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.4)"></figure>
-<div class="author">Presentado por: Juan Jos&eacute; P&eacute;rez Herrera &amp; Deisy Patricia Angarita<br><small style="opacity:.6">Universidad Tecnol&oacute;gica de Pereira &mdash; 2026</small></div>
-</div>
-<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
-<div class="page page-right" style="padding-top:28px">
-<h2 class="section-title"><i class="fas fa-list"></i> &Iacute;ndice de Contenidos</h2>
-<div class="toc-item" onclick="goTo(1)"><span class="toc-num">1</span> Definición e Historia del Efecto Doppler</div>
-<div class="toc-item" onclick="goTo(1)"><span class="toc-num">2</span> El Fenómeno Físico: Fuente en Movimiento</div>
-<div class="toc-item" onclick="goTo(2)"><span class="toc-num">3</span> Análisis Geométrico y Derivación</div>
-<div class="toc-item" onclick="goTo(2)"><span class="toc-num">4</span> Fórmula General del Efecto Doppler</div>
-<div class="toc-item" onclick="goTo(3)"><span class="toc-num">5</span> Convención de Signos y Casos</div>
-<div class="toc-item" onclick="goTo(3)"><span class="toc-num">6</span> Efecto Doppler con Corriente en el Medio</div>
-<div class="toc-item" onclick="goTo(4)"><span class="toc-num">7</span> Ondas de Choque y Número de Mach</div>
-<div class="toc-item" onclick="goTo(4)"><span class="toc-num">8</span> El Boom Sónico: Geometría del Cono</div>
-<div class="toc-item" onclick="goTo(5)"><span class="toc-num">9</span> Efecto Doppler Relativista</div>
-<div class="toc-item" onclick="goTo(5)"><span class="toc-num">10</span> Redshift, Blueshift y Ley de Hubble</div>
-<div class="toc-item" onclick="goTo(6)"><span class="toc-num sim">11</span><i class="fas fa-gamepad" style="color:var(--accent2)"></i> Simulador Doppler Interactivo</div>
-<div class="toc-item" onclick="goTo(7)"><span class="toc-num">12</span> Ejercicios tipo ICFES y Desarrollo</div>
-<div class="toc-item" onclick="goTo(8)"><span class="toc-num">13</span> Resumen, Glosario y Bibliografía</div>
-<span class="page-num">ii</span>
-</div>
-</div>
+    <!-- HEADER -->
+    <header class="h-14 bg-[var(--bg-surface)] border-b border-[var(--border-color)] flex justify-between items-center px-4 shadow-sm z-50 relative overflow-hidden">
+        <!-- Gradient accent line -->
+        <div class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+        <div class="flex items-center gap-3">
+            <div class="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/30">
+                <i data-lucide="waves" class="w-5 h-5 text-white"></i>
+            </div>
+            <h1 class="font-extrabold text-lg tracking-tight">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500">Doppler Studio</span>
+                <span class="text-[10px] font-mono text-[var(--text-muted)] opacity-50 ml-1.5">QUANTUM</span>
+            </h1>
+        </div>
 
-<!-- ═══════ SPREAD 1: DEFINICIÓN + FENÓMENO FÍSICO ═══════ -->
-<div class="spread" data-spread="1">
-<div class="page page-left">
-<h2 class="section-title"><i class="fas fa-book-open"></i> ¿Qué es el Efecto Doppler?</h2>
-<div class="def-box"><p>El <strong>Efecto Doppler</strong> es el cambio aparente en la frecuencia (y la longitud de onda) de una onda cuando existe <strong>movimiento relativo</strong> entre la fuente emisora y el observador. Aplica a todo tipo de ondas: sonoras, electromagnéticas, de agua, etc.</p></div>
-<h3 class="sub-title">Contexto Histórico</h3>
-<p><strong>Christian Andreas Doppler</strong> (1803–1853), físico austríaco, presentó su teoría en 1842 en su publicación <em>Über das farbige Licht der Doppelsterne</em> ("Sobre la luz coloreada de las estrellas dobles"), proponiendo que el color observado de una estrella dependía de su velocidad radial.</p>
-<p>En <strong>1845</strong>, el meteorólogo holandés <strong>Christophorus Buys Ballot</strong> realizó la primera verificación experimental: colocó trompetistas en un tren en movimiento y músicos con oído absoluto en la estación, comprobando el cambio de tono predicho por Doppler.</p>
-<p>En <strong>1848</strong>, el físico francés <strong>Armand Fizeau</strong> extendió la teoría a ondas electromagnéticas, por lo que en Francia se conoce como <em>efecto Doppler-Fizeau</em>.</p>
-<h3 class="sub-title">¿Por qué ocurre?</h3>
-<p>Las ondas se propagan en el medio a una velocidad \(c\) que <strong>no depende del movimiento de la fuente</strong>. Si la fuente se mueve en la misma dirección de propagación, los frentes de onda se <strong>comprimen</strong> por delante (menor \(\lambda\), mayor \(f\)) y se <strong>expanden</strong> por detrás (mayor \(\lambda\), menor \(f\)).</p>
-<figure><img src="IMAGENES/Qué es el Efecto Doppler.png" alt="Esquema del Efecto Doppler: compresión y expansión de frentes de onda" class="book-img"><figcaption>Fig. 1 — Efecto Doppler: a la izquierda, fuente en reposo (frentes concéntricos); a la derecha, fuente en movimiento (frentes comprimidos delante, expandidos detrás).</figcaption></figure>
-<div class="note-box"><p>⚠️ <strong>Importante:</strong> El efecto Doppler ocurre incluso si solo el <em>observador</em> se mueve. La clave es el <strong>movimiento relativo</strong> entre fuente y observador respecto al medio de propagación.</p></div>
-<span class="page-num">1</span>
-</div>
-<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
-<div class="page page-right">
-<h2 class="section-title"><i class="fas fa-book-open"></i> El Fenómeno Físico</h2>
-<figure><img src="IMAGENES/Diagrama fundamental.jpeg" alt="Diagrama fundamental: fuente en reposo vs. fuente en movimiento" class="book-img"><figcaption>Fig. 2 — Diagrama fundamental. Arriba: fuente estática, frentes equidistantes. Abajo: fuente moviéndose a la derecha, frentes comprimidos delante.</figcaption></figure>
-<h3 class="sub-title">Fuente en Movimiento (Observador en Reposo)</h3>
-<p>Consideremos una fuente que emite ondas de frecuencia \(f_0\) y se mueve con velocidad \(v_f\) hacia un observador estacionario. La velocidad del sonido en el medio es \(c\).</p>
-<p><strong>Delante de la fuente</strong> (la fuente se acerca al observador): en un período \(T = 1/f_0\), la fuente avanza \(v_f \cdot T\). El frente de onda anterior ya se ha expandido un radio \(c \cdot T\). La distancia entre frentes consecutivos se reduce:</p>
-<div class="formula-box">\[ \lambda_{\text{del}} = c \cdot T - v_f \cdot T = \frac{c - v_f}{f_0} \]</div>
-<p><strong>Detrás de la fuente</strong> (la fuente se aleja): la fuente se mueve en sentido opuesto al frente, aumentando la separación:</p>
-<div class="formula-box">\[ \lambda_{\text{det}} = c \cdot T + v_f \cdot T = \frac{c + v_f}{f_0} \]</div>
-<p>Como \(f = c/\lambda\), las frecuencias percibidas son:</p>
-<div class="formula-box" style="background:rgba(21,101,192,.08)">
-\[ f'_{\text{del}} = \frac{c}{c - v_f} \cdot f_0 \qquad f'_{\text{det}} = \frac{c}{c + v_f} \cdot f_0 \]
-</div>
-<h3 class="sub-title">Observador en Movimiento (Fuente en Reposo)</h3>
-<p>Si la fuente está fija, la longitud de onda \(\lambda\) no cambia. Pero el observador se mueve con velocidad \(v_o\) y la velocidad relativa de los frentes de onda respecto a él es \(c \pm v_o\):</p>
-<div class="formula-box">\[ f' = \frac{c \pm v_o}{\lambda} = f_0 \cdot \frac{c \pm v_o}{c} \]
-<p style="font-size:.78em;color:var(--text)">\(+\) si se acerca a la fuente, \(-\) si se aleja.</p></div>
-<div class="def-box"><p><strong>Diferencia fundamental:</strong> cuando la <em>fuente</em> se mueve, \(\lambda\) cambia físicamente. Cuando el <em>observador</em> se mueve, \(\lambda\) queda igual pero la <em>tasa de interceptación</em> de frentes cambia.</p></div>
-<span class="page-num">2</span>
-</div>
-</div>
+        <nav class="flex items-center gap-1">
+            <button onclick="toggleModal('theory')" class="btn-header" title="Teoría Física">
+                <i data-lucide="book-open" class="w-4 h-4 text-indigo-500"></i>
+                <span class="hidden sm:inline">Teoría</span>
+            </button>
+            <button onclick="toggleModal('manual')" class="btn-header" title="Manual de Usuario">
+                <i data-lucide="help-circle" class="w-4 h-4 text-emerald-500"></i>
+                <span class="hidden sm:inline">Ayuda</span>
+            </button>
+            <button onclick="toggleModal('config')" class="btn-header" title="Configuración Visual">
+                <i data-lucide="sliders-horizontal" class="w-4 h-4 text-blue-500"></i>
+                <span class="hidden sm:inline">Visual</span>
+            </button>
+            <div class="h-4 w-px bg-[var(--border-color)] mx-2"></div>
+            <button onclick="toggleModal('settings')" class="btn-header" title="Tema">
+                <i data-lucide="settings-2" class="w-4 h-4 text-slate-500"></i>
+            </button>
+        </nav>
+    </header>
 
-<!-- ═══════ SPREAD 2: ANÁLISIS GEOMÉTRICO + FÓRMULA GENERAL ═══════ -->
-<div class="spread" data-spread="2">
-<div class="page page-left">
-<h2 class="section-title"><i class="fas fa-ruler-combined"></i> Análisis Geométrico</h2>
-<figure><img src="IMAGENES/Análisis Geométrico.png" alt="Análisis geométrico del Efecto Doppler mostrando distancias c·t y v_f·t" class="book-img"><figcaption>Fig. 3 — Modelo geométrico: en un tiempo \(t\), la onda viaja \(c \cdot t\) y la fuente se desplaza \(v_f \cdot t\). Las longitudes de onda delante y detrás son diferentes.</figcaption></figure>
-<p>En la figura, la fuente emite un frente de onda en el punto A y se desplaza al punto B en un tiempo \(t\). El primer frente se ha expandido un radio \(c \cdot t\). La fuente ha recorrido \(v_f \cdot t\).</p>
-<p>La <strong>longitud de onda efectiva</strong> delante de la fuente es la diferencia entre ambas distancias dividida por el número de ciclos emitidos \(n = f_0 \cdot t\):</p>
-<div class="formula-box">\[ \lambda_{\text{del}} = \frac{c \cdot t - v_f \cdot t}{f_0 \cdot t} = \frac{c - v_f}{f_0} \]</div>
-<p>Análogamente, detrás:</p>
-<div class="formula-box">\[ \lambda_{\text{det}} = \frac{c + v_f}{f_0} \]</div>
-<h3 class="sub-title">Derivación de la Fórmula General</h3>
-<p>Cuando <strong>ambos</strong> — fuente y observador — se mueven, debemos combinar ambos efectos. La longitud de onda modificada por el movimiento de la fuente es interceptada por un observador que también se desplaza:</p>
-<div class="formula-box" style="background:rgba(21,101,192,.1);border-color:var(--accent)">
-<p style="font-weight:800;margin-bottom:6px;font-size:1em">Ecuación General del Efecto Doppler Acústico</p>
-\[ \boxed{f' = f_0 \cdot \frac{c \pm v_o}{c \mp v_f}} \]
-<p style="font-size:.78em;color:var(--text)">donde \(c\) = velocidad del sonido, \(v_o\) = velocidad del observador, \(v_f\) = velocidad de la fuente.</p>
-</div>
-<span class="page-num">3</span>
-</div>
-<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
-<div class="page page-right">
-<h2 class="section-title"><i class="fas fa-book-open"></i> Magnitudes y Unidades</h2>
-<table class="styled-table"><thead><tr><th>Símbolo</th><th>Magnitud</th><th>Unidad SI</th><th>Descripción</th></tr></thead>
-<tbody>
-<tr><td>\(c\) o \(v\)</td><td>Vel. del sonido</td><td>m/s</td><td>≈ 340 m/s en aire a 20°C</td></tr>
-<tr><td>\(f_0\)</td><td>Frecuencia emitida</td><td>Hz</td><td>Propiedad de la fuente</td></tr>
-<tr><td>\(f'\)</td><td>Frecuencia percibida</td><td>Hz</td><td>Lo que mide el observador</td></tr>
-<tr><td>\(v_f\)</td><td>Vel. de la fuente</td><td>m/s</td><td>Respecto al medio</td></tr>
-<tr><td>\(v_o\)</td><td>Vel. del observador</td><td>m/s</td><td>Respecto al medio</td></tr>
-<tr><td>\(\lambda\)</td><td>Longitud de onda</td><td>m</td><td>\(\lambda = c/f\)</td></tr>
-<tr><td>\(M\)</td><td>Número de Mach</td><td>—</td><td>\(M = v_f/c\)</td></tr>
-</tbody></table>
-<h3 class="sub-title">Casos Particulares</h3>
-<table class="styled-table"><thead><tr><th>Caso</th><th>Condición</th><th>Fórmula</th></tr></thead>
-<tbody>
-<tr><td>Solo fuente se acerca</td><td>\(v_o=0\)</td><td>\(f'=f_0 \cdot \frac{c}{c-v_f}\)</td></tr>
-<tr><td>Solo fuente se aleja</td><td>\(v_o=0\)</td><td>\(f'=f_0 \cdot \frac{c}{c+v_f}\)</td></tr>
-<tr><td>Solo obs. se acerca</td><td>\(v_f=0\)</td><td>\(f'=f_0 \cdot \frac{c+v_o}{c}\)</td></tr>
-<tr><td>Solo obs. se aleja</td><td>\(v_f=0\)</td><td>\(f'=f_0 \cdot \frac{c-v_o}{c}\)</td></tr>
-<tr><td>Ambos en reposo</td><td>\(v_f=v_o=0\)</td><td>\(f'=f_0\)</td></tr>
-</tbody></table>
-<h3 class="sub-title">Efecto sobre la Percepción</h3>
-<div class="compare-grid">
-<div class="compare-card"><h4 style="font-size:.85em">🔵 Acercamiento</h4><p>\(\lambda\) disminuye → \(f'\) aumenta → sonido más <strong>agudo</strong>.</p></div>
-<div class="compare-card"><h4 style="font-size:.85em">🔴 Alejamiento</h4><p>\(\lambda\) aumenta → \(f'\) disminuye → sonido más <strong>grave</strong>.</p></div>
-</div>
-<div class="note-box"><p>⚠️ <strong>Mnemotécnica:</strong> el numerador se refiere al observador, el denominador a la fuente. <em>Acercamiento siempre incrementa f'</em>.</p></div>
-<span class="page-num">4</span>
-</div>
-</div>
+    <!-- MAIN LAYOUT -->
+    <div class="flex flex-1 h-[calc(100vh-56px)] overflow-hidden relative">
+        
+        <!-- Panel Izquierdo -->
+        <aside id="left-panel" class="w-80 bg-[var(--bg-surface)] border-r border-[var(--border-color)] flex flex-col shadow-2xl z-20 transition-width duration-0 relative">
+            <div class="p-4 border-b border-[var(--border-color)] bg-gradient-to-r from-blue-50/30 to-transparent dark:from-slate-800/30 flex justify-between items-center">
+                <h2 class="font-bold text-sm uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-2">
+                    <i data-lucide="sliders" class="w-4 h-4"></i> Parámetros
+                </h2>
+                <span id="sim-status" class="text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 animate-pulse border border-emerald-200 dark:border-emerald-800">LIVE</span>
+            </div>
 
-<!-- ═══════ SPREAD 3: CONVENCIÓN DE SIGNOS + CORRIENTE ═══════ -->
-<div class="spread" data-spread="3">
-<div class="page page-left">
-<h2 class="section-title"><i class="fas fa-arrows-alt-h"></i> Convención de Signos</h2>
-<p>La dirección positiva se define como la línea que va <strong>del observador hacia la fuente</strong>. Bajo esta convención:</p>
-<div class="def-box"><p><strong>Numerador (\(c + v_o\)):</strong> se usa \(+v_o\) si el observador se mueve <em>hacia</em> la fuente (acercamiento).</p>
-<p><strong>Denominador (\(c - v_f\)):</strong> se usa \(-v_f\) si la fuente se mueve <em>hacia</em> el observador (acercamiento).</p></div>
-<p>Esta convención es consistente: todo movimiento que <strong>reduce la distancia</strong> fuente-observador produce un <strong>aumento</strong> de frecuencia.</p>
-<h3 class="sub-title">¿Qué cambia en cada caso?</h3>
-<table class="styled-table"><thead><tr><th>¿Quién se mueve?</th><th>¿Cambia λ?</th><th>¿Cambia f?</th><th>¿Por qué?</th></tr></thead>
-<tbody>
-<tr><td>Solo la fuente</td><td><strong>Sí</strong></td><td>Sí</td><td>La fuente comprime/expande los frentes al moverse</td></tr>
-<tr><td>Solo el observador</td><td>No</td><td><strong>Sí</strong></td><td>El observador intercepta frentes a ritmo diferente</td></tr>
-<tr><td>Ambos</td><td>Sí</td><td>Sí</td><td>Combinación de ambos efectos</td></tr>
-</tbody></table>
-<h3 class="sub-title">Aplicaciones Tecnológicas</h3>
-<table class="styled-table"><thead><tr><th>Aplicación</th><th>Tipo de Onda</th><th>Uso</th></tr></thead>
-<tbody>
-<tr><td>🚔 Radar policial</td><td>Microondas</td><td>Medir velocidad vehicular</td></tr>
-<tr><td>🏥 Ecografía Doppler</td><td>Ultrasonido</td><td>Flujo sanguíneo</td></tr>
-<tr><td>🌪️ Radar meteorológico</td><td>Microondas</td><td>Vientos en tormentas</td></tr>
-<tr><td>🌌 Astronomía</td><td>Luz visible/radio</td><td>Velocidad radial de estrellas</td></tr>
-<tr><td>🚢 Sonar</td><td>Ultrasonido</td><td>Detección submarina</td></tr>
-<tr><td>🦇 Ecolocación</td><td>Ultrasonido</td><td>Murciélagos y delfines</td></tr>
-</tbody></table>
-<span class="page-num">5</span>
-</div>
-<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
-<div class="page page-right">
-<h2 class="section-title"><i class="fas fa-water"></i> Efecto Doppler con Corriente en el Medio</h2>
-<figure><img src="IMAGENES/Movimiento con Corriente.png" alt="Dos buques con corriente marina" class="book-img"><figcaption>Fig. 4 — Efecto Doppler cuando el medio (agua, viento) se mueve. Las velocidades deben expresarse respecto al medio, no respecto a tierra.</figcaption></figure>
-<p>Cuando el medio de propagación se mueve (viento, corriente marina), las velocidades de fuente y observador deben ser <strong>relativas al medio</strong>:</p>
-<div class="formula-box">\[ v_{f,\text{rel}} = v_f \pm v_{\text{corriente}} \qquad v_{o,\text{rel}} = v_o \pm v_{\text{corriente}} \]</div>
-<p>El signo depende de si la corriente es favorable (misma dirección) o contraria al movimiento del objeto.</p>
-<div class="def-box"><p><strong>Principio clave:</strong> La velocidad del sonido \(c\) ya está referida al medio. No se modifica por la corriente. Solo cambian \(v_f\) y \(v_o\) respecto al medio.</p></div>
-<div class="example-box" style="border-left-color:var(--accent3)">
-<p style="font-weight:800;color:var(--accent3);font-size:.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">✅ Ejemplo: Buques con corriente</p>
-<p>Buque 1: 64 km/h, sonar 1200 Hz. Buque 2: 45 km/h (dirección opuesta). Corriente: 10 km/h. \(c_{agua}=1520\) m/s.</p>
-\[ v_{f,\text{rel}} = 17{,}78+2{,}78 = 20{,}56 \text{ m/s} \]
-\[ f_o = 1200 \cdot \frac{1520-15{,}28}{1520-20{,}56} \approx 1204{,}2 \text{ Hz} \]
-</div>
-<div class="warning-box"><p>⚠️ <strong>Error común:</strong> Sumar la velocidad del viento/corriente a \(c\). La velocidad del sonido en el medio <strong>no cambia</strong>; lo que cambia es la velocidad relativa de fuente y observador respecto al medio.</p></div>
-<span class="page-num">6</span>
-</div>
-</div>
+            <div class="flex-1 overflow-y-auto custom-scroll p-5 space-y-8">
+                <!-- Selector Fuente -->
+                <div class="space-y-3">
+                    <label class="text-xs font-bold text-[var(--text-muted)]">EMISOR DE ONDAS</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setSourceType('point')" id="btn-point" class="btn-modern p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-canvas)] flex flex-col items-center gap-2 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors source-active ring-2 ring-blue-500 ring-offset-1 dark:ring-offset-slate-900">
+                            <i data-lucide="circle-dot" class="w-5 h-5 text-blue-500"></i>
+                            <span class="text-[10px] font-bold">Puntual</span>
+                        </button>
+                        <button onclick="setSourceType('car')" id="btn-car" class="btn-modern p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-canvas)] flex flex-col items-center gap-2 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors">
+                            <i data-lucide="car" class="w-5 h-5 text-slate-500"></i>
+                            <span class="text-[10px] font-medium">Coche</span>
+                        </button>
+                        <button onclick="setSourceType('jet')" id="btn-jet" class="btn-modern p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-canvas)] flex flex-col items-center gap-2 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors">
+                            <i data-lucide="plane" class="w-5 h-5 text-slate-500"></i>
+                            <span class="text-[10px] font-medium">Jet</span>
+                        </button>
+                    </div>
+                </div>
 
-<!-- ═══════ SPREAD 4: ONDAS DE CHOQUE + CONO DE MACH ═══════ -->
-<div class="spread" data-spread="4">
-<div class="page page-left">
-<h2 class="section-title"><i class="fas fa-bolt"></i> Ondas de Choque y Número de Mach</h2>
-<figure><img src="IMAGENES/Ondas de Choque y Onda de Mach.png" alt="Ondas de choque y cono de Mach" class="book-img"><figcaption>Fig. 5 — Formación del cono de Mach. A \(M>1\), la fuente viaja más rápido que sus propias ondas y los frentes se acumulan en un cono.</figcaption></figure>
-<h3 class="sub-title">¿Qué es el Número de Mach?</h3>
-<div class="def-box"><p>El <strong>número de Mach</strong> es la razón adimensional entre la velocidad de un objeto y la velocidad del sonido en el medio en que se desplaza:</p>
-\[ M = \frac{v_f}{c} \]
-<p>Fue nombrado en honor a <strong>Ernst Mach</strong> (1838–1916), filósofo y físico austríaco que en 1887 fotografió por primera vez las ondas de choque de un proyectil supersónico.</p>
-</div>
-<h3 class="sub-title">Regímenes de Vuelo</h3>
-<table class="styled-table"><thead><tr><th>Régimen</th><th>Mach</th><th>km/h (aprox.)</th><th>Ondas</th></tr></thead>
-<tbody>
-<tr><td>Subsónico</td><td>\(M < 0{,}8\)</td><td>< 980</td><td>Se propagan en todas direcciones</td></tr>
-<tr><td>Transónico</td><td>\(0{,}8 < M < 1{,}2\)</td><td>980–1470</td><td>Se acumulan frente al objeto</td></tr>
-<tr><td>Supersónico</td><td>\(1{,}2 < M < 5\)</td><td>1470–6125</td><td>Cono de Mach bien definido</td></tr>
-<tr><td>Hipersónico</td><td>\(M > 5\)</td><td>> 6125</td><td>Calentamiento extremo del aire</td></tr>
-</tbody></table>
-<h3 class="sub-title">La Barrera del Sonido</h3>
-<p>A \(M = 1\), el denominador de la ecuación Doppler se anula: \(f' \to \infty\). Físicamente, todos los frentes de onda se superponen en un plano perpendicular al movimiento, creando una onda de choque de <strong>altísima presión</strong> — el <strong>boom sónico</strong>.</p>
-<span class="page-num">7</span>
-</div>
-<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
-<div class="page page-right">
-<h2 class="section-title"><i class="fas fa-drafting-compass"></i> Geometría del Cono de Mach</h2>
-<p>Cuando \(v_f > c\) (régimen supersónico), la fuente avanza más rápido que las ondas que emite. Los frentes de onda se acumulan formando un <strong>cono</strong> cuyo semi-ángulo \(\theta\) viene dado por:</p>
-<div class="formula-box" style="background:rgba(21,101,192,.1)">
-<p style="font-weight:800;margin-bottom:4px">Ángulo del Cono de Mach</p>
-\[ \boxed{\sin \theta = \frac{c}{v_f} = \frac{1}{M}} \implies \theta = \arcsin\!\left(\frac{1}{M}\right) \]
-</div>
-<p><strong>Derivación geométrica:</strong> en un tiempo \(t\), la fuente se desplaza \(v_f \cdot t\) (hipotenusa) y la onda se expande \(c \cdot t\) (cateto opuesto). Por trigonometría: \(\sin\theta = c \cdot t / v_f \cdot t = c/v_f\).</p>
-<table class="styled-table"><thead><tr><th>Mach</th><th>θ (°)</th><th>Abertura total</th></tr></thead>
-<tbody>
-<tr><td>1,0</td><td>90°</td><td>180° (plano)</td></tr>
-<tr><td>1,5</td><td>41,8°</td><td>83,6°</td></tr>
-<tr><td>2,0</td><td>30,0°</td><td>60°</td></tr>
-<tr><td>3,0</td><td>19,5°</td><td>39°</td></tr>
-<tr><td>5,0</td><td>11,5°</td><td>23°</td></tr>
-</tbody></table>
-<div class="def-box"><p>A mayor número de Mach, <strong>más cerrado</strong> es el cono. A \(M=1\), el cono degenera en un plano perpendicular.</p></div>
-<h3 class="sub-title">El Boom Sónico en la Vida Real</h3>
-<p>El estallido sónico no ocurre solo al "romper" la barrera del sonido — es un fenómeno <strong>continuo</strong>: mientras el objeto viaje a \(M \geq 1\), la onda de choque se genera permanentemente. El observador lo escucha como un estallido repentino cuando el cono lo alcanza.</p>
-<p>El Concorde volaba a Mach 2.04, el SR-71 Blackbird a Mach 3.3, y el X-15 alcanzó Mach 6.72.</p>
-<span class="page-num">8</span>
-</div>
-</div>
+                <!-- Sliders -->
+                <div class="space-y-6">
+                    <div class="relative">
+                        <div class="flex justify-between items-end mb-2">
+                            <label class="text-sm font-bold text-[var(--text-muted)] flex items-center gap-1">Velocidad Fuente ($v_s$)</label>
+                            <span id="val-vs" class="font-mono font-bold text-blue-600 dark:text-blue-400 text-sm bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded">0 m/s</span>
+                        </div>
+                        <input type="range" min="-340" max="680" step="10" value="0" id="input-vs" class="slider-colored" style="color: #3b82f6;">
+                        <div class="flex justify-between text-[9px] font-bold text-[var(--text-muted)] mt-1 opacity-50"><span>-1 Mach</span><span>Repos</span><span>2 Mach</span></div>
+                    </div>
+                    <div class="relative">
+                        <div class="flex justify-between items-end mb-2">
+                            <label class="text-sm font-bold text-[var(--text-muted)] flex items-center gap-1">Frecuencia Fuente ($f_s$)</label>
+                            <span id="val-freq" class="font-mono font-bold text-purple-600 dark:text-purple-400 text-sm bg-purple-50 dark:bg-purple-900/30 px-2 py-0.5 rounded">2.0 Hz</span>
+                        </div>
+                        <input type="range" min="0.5" max="5.0" step="0.1" value="2.0" id="input-freq" class="slider-colored" style="color: #9333ea;">
+                    </div>
+                    <div class="relative">
+                        <div class="flex justify-between items-end mb-2">
+                            <label class="text-sm font-bold text-[var(--text-muted)] flex items-center gap-1">Vel. Sonido ($c$)</label>
+                            <span id="val-c" class="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded">340 m/s</span>
+                        </div>
+                        <input type="range" min="100" max="500" step="10" value="340" id="input-c" class="slider-colored" style="color: #10b981;">
+                    </div>
+                    
+                    <!-- VOLUMEN CON BOTÓN DE TOGGLE -->
+                    <div class="relative pt-2 border-t border-[var(--border-color)]">
+                        <div class="flex justify-between items-end mb-2">
+                            <div class="flex items-center gap-2">
+                                <button id="btn-audio-toggle" class="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors text-[var(--text-muted)] border border-[var(--border-color)]" title="Activar/Desactivar Audio" onclick="toggleAudio()">
+                                    <i data-lucide="volume-x" class="w-4 h-4" id="icon-audio-toggle"></i>
+                                </button>
+                                <label class="text-sm font-bold text-[var(--text-muted)]">Volumen Audio</label>
+                            </div>
+                            <span id="val-vol" class="font-mono font-bold text-amber-600 dark:text-amber-400 text-sm bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded">90%</span>
+                        </div>
+                        <input type="range" min="0" max="100" step="1" value="90" id="input-vol" class="slider-colored" style="color: #f59e0b;">
+                    </div>
+                </div>
 
-<!-- ═══════ SPREAD 5: DOPPLER RELATIVISTA ═══════ -->
-<div class="spread" data-spread="5">
-<div class="page page-left">
-<h2 class="section-title"><i class="fas fa-star"></i> Efecto Doppler Relativista</h2>
-<p>Para ondas <strong>electromagnéticas</strong> (luz, radio, microondas), no existe un medio material de propagación. La velocidad de la luz \(c\) es constante en todos los marcos de referencia (postulado de Einstein, 1905). Por ello, la fórmula clásica no aplica directamente: debe incorporarse la <strong>dilatación temporal</strong> relativista.</p>
-<div class="formula-box" style="background:rgba(21,101,192,.1)">
-<p style="font-weight:800;margin-bottom:6px">Efecto Doppler Relativista</p>
-\[ \boxed{f' = f_0 \cdot \sqrt{\frac{c + v_r}{c - v_r}}} \]
-<p style="font-size:.78em;color:var(--text)">\(v_r > 0\): fuente se acerca (blueshift); \(v_r < 0\): se aleja (redshift).</p>
-</div>
-<p>En términos de longitud de onda:</p>
-<div class="formula-box">\[ \lambda' = \lambda_0 \cdot \sqrt{\frac{c - v_r}{c + v_r}} \]</div>
-<h3 class="sub-title">Parámetro de Corrimiento Espectral (z)</h3>
-<p>En astronomía, se define el <strong>parámetro de corrimiento</strong> como:</p>
-<div class="formula-box">\[ z = \frac{\Delta\lambda}{\lambda_{\text{emitida}}} = \frac{\lambda_{\text{obs}} - \lambda_{\text{em}}}{\lambda_{\text{em}}} \]</div>
-<p>La relación con la velocidad radial (caso no relativista, \(v \ll c\)):</p>
-<div class="formula-box">\[ z \approx \frac{v_r}{c} \qquad \Longleftrightarrow \qquad v_r \approx z \cdot c \]</div>
-<p>Para el caso completamente relativista:</p>
-<div class="formula-box">\[ 1 + z = \sqrt{\frac{c + v_r}{c - v_r}} \]</div>
-<span class="page-num">9</span>
-</div>
-<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
-<div class="page page-right">
-<h2 class="section-title"><i class="fas fa-globe-americas"></i> Redshift, Blueshift y Ley de Hubble</h2>
-<figure><img src="IMAGENES/Espectro de referencia.jpeg" alt="Espectro de referencia mostrando corrimiento al rojo y al azul" class="book-img"><figcaption>Fig. 6 — Líneas espectrales: en reposo (centro), con redshift (arriba) y blueshift (abajo). El desplazamiento indica la velocidad radial de la fuente.</figcaption></figure>
-<div class="compare-grid">
-<div class="compare-card"><h4 style="font-size:.85em">🔴 Redshift (\(z > 0\))</h4><p>La fuente se <strong>aleja</strong> del observador. La longitud de onda observada es <strong>mayor</strong> que la emitida. Las líneas espectrales se desplazan hacia el rojo.</p></div>
-<div class="compare-card"><h4 style="font-size:.85em">🔵 Blueshift (\(z < 0\))</h4><p>La fuente se <strong>acerca</strong>. La longitud de onda observada es <strong>menor</strong>. Las líneas se desplazan hacia el azul.</p></div>
-</div>
-<h3 class="sub-title">La Ley de Hubble (1929)</h3>
-<p><strong>Edwin Hubble</strong> descubrió que casi todas las galaxias presentan <em>redshift</em>, y que el corrimiento es proporcional a la distancia:</p>
-<div class="formula-box" style="background:rgba(21,101,192,.1)"><p style="font-weight:800;margin-bottom:4px">Ley de Hubble-Lemaître</p>
-\[ \boxed{v = H_0 \cdot d} \]
-<p style="font-size:.78em;color:var(--text)">\(H_0 \approx 70\) km/s/Mpc — Constante de Hubble</p></div>
-<p>Esta ley fue la primera evidencia observacional de la <strong>expansión del universo</strong>. Las galaxias más lejanas se alejan más rápido.</p>
-<div class="def-box">
-<p><strong>Consecuencias del Doppler EM:</strong></p>
-<ul style="padding-left:16px;font-size:.85em;line-height:1.9">
-<li>🌌 La mayoría de galaxias → redshift → el universo se expande.</li>
-<li>🔵 Andrómeda → blueshift → se acerca a 110 km/s.</li>
-<li>🔭 Quásares lejanos → \(z > 7\) → velocidades cercanas a \(c\).</li>
-<li>📡 CMBR tiene \(z \approx 1100\) → radiación del Big Bang.</li>
-</ul>
-</div>
-<span class="page-num">10</span>
-</div>
-</div>
+                <div class="grid grid-cols-1 gap-3 pt-4">
+                    <button id="btn-toggle" class="btn-modern btn-primary w-full py-3.5 rounded-xl font-bold text-white flex justify-center items-center gap-2 text-sm uppercase tracking-wide shadow-lg shadow-blue-500/20">
+                        <i data-lucide="pause" id="icon-playpause" class="w-4 h-4 fill-current"></i>
+                        <span id="text-playpause">Pausar</span>
+                    </button>
+                     <button id="btn-reset" class="btn-modern bg-white dark:bg-slate-800 border border-[var(--border-color)] w-full py-3 rounded-xl font-semibold text-[var(--text-muted)] text-sm flex justify-center items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reiniciar
+                    </button>
+                </div>
+            </div>
+            <div id="drag-left" class="resizer absolute top-0 right-0 h-full w-3 -mr-1.5"><div class="resizer-pill"></div></div>
+        </aside>
 
-<!-- ═══════ SPREAD 6: SIMULADOR DOPPLER ═══════ -->
-<div class="spread" data-spread="6">
-<div class="page page-left">
-<h2 class="section-title"><i class="fas fa-atom"></i> Laboratorio Virtual: Simulador Doppler</h2>
-<div class="def-box">
-<p><strong>📌 Este simulador</strong> utiliza el <strong>modelo vectorial real</strong> del efecto Doppler. A diferencia de la fórmula escalar simple, aquí se calcula el <em>producto punto</em> \(\vec{v} \cdot \hat{r}\) (velocidad radial) en tiempo real para cada posición.</p>
-</div>
-<div class="formula-box">\[ f' = f_s \left( \frac{c - \vec{v}_o \cdot \hat{r}}{c - \vec{v}_s \cdot \hat{r}} \right) \]</div>
-<h3 class="sub-title">Instrucciones de Uso</h3>
-<ul style="padding-left:16px;line-height:2;font-size:.85em">
-<li>🎯 <strong>Arrastra</strong> el coche/jet y el micrófono para posicionarlos.</li>
-<li>🎚️ Usa los <strong>sliders</strong> para velocidad de fuente, frecuencia y velocidad del sonido.</li>
-<li>🔊 Activa el <strong>audio</strong> con el botón de volumen.</li>
-<li>📊 Consulta la <strong>telemetría</strong> en el panel derecho.</li>
-<li>📈 Abre el <strong>osciloscopio</strong> para ver \(f(t)\).</li>
-<li>🎨 Personaliza el color y estilo de la onda.</li>
-</ul>
-<h3 class="sub-title">Fenómenos que puedes observar</h3>
-<table class="styled-table"><thead><tr><th>Régimen</th><th>Observación Visual</th></tr></thead>
-<tbody>
-<tr><td>Subsónico</td><td>Ondas comprimidas delante, expandidas detrás</td></tr>
-<tr><td>Mach 1</td><td>Todos los frentes se apilan en un plano</td></tr>
-<tr><td>Supersónico</td><td>Cono de Mach visible con ángulo \(\theta\)</td></tr>
-<tr><td>Velocidad negativa</td><td>La fuente se mueve en sentido inverso</td></tr>
-</tbody></table>
-<div class="note-box"><p>⚠️ Haz clic en <strong>Pantalla completa</strong> para la mejor experiencia visual.</p></div>
-<span class="page-num">11</span>
-</div>
-<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
-<div class="page page-right" style="padding:8px;display:flex;flex-direction:column">
-<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 8px;margin-bottom:4px">
-<span style="font-size:.78em;font-weight:700;color:var(--accent)"><i class="fas fa-gamepad"></i> SIMULADOR DOPPLER — QUANTUM EDITION</span>
-<button onclick="document.getElementById('sim-doppler-frame').requestFullscreen?.()" style="background:var(--accent);color:#fff;border:none;padding:3px 10px;border-radius:5px;font-size:.7em;cursor:pointer;font-weight:600"><i class="fas fa-expand"></i> Pantalla completa</button>
-</div>
-<iframe id="sim-doppler-frame" src="../../CLASE N5/SIMULACION EFECTO DOPPLER/EfectoDoppler.html" style="flex:1;width:100%;border:2px solid var(--accent);border-radius:10px;background:#030712;min-height:280px" allow="autoplay" loading="lazy"></iframe>
-<p style="font-size:.65em;text-align:center;color:var(--text);opacity:.5;margin-top:4px"><i class="fas fa-mouse-pointer"></i> Arrastra objetos · Sliders para parámetros · Audio en tiempo real · Osciloscopio</p>
-<span class="page-num">12</span>
-</div>
-</div>
+        <!-- Canvas -->
+        <main class="flex-1 relative bg-[var(--bg-canvas)] overflow-hidden cursor-crosshair" id="canvas-container">
+            <canvas id="sim-canvas" class="block outline-none w-full h-full"></canvas>
+            <div class="absolute top-4 left-6 pointer-events-none select-none">
+                <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-4 py-3 rounded-xl shadow-lg border border-[var(--border-color)] flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                        <i data-lucide="ear" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-wide">Frecuencia Percibida</div>
+                        <div id="observer-freq-disp" class="text-2xl font-mono font-bold text-[var(--text-main)]">0.00 Hz</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Mach HUD -->
+            <div class="mach-hud">
+                <div class="mach-pill">
+                    <span class="mach-label">Número de Mach</span>
+                    <span id="mach-value" class="mach-value subsonic">0.00</span>
+                    <span id="mach-regime" class="regime-tag sub">Subsónico</span>
+                </div>
+            </div>
+            <div class="absolute bottom-6 right-6 flex flex-col gap-2 z-10">
+                <button onclick="toggleModal('oscillo')" class="btn-icon-glass p-2.5 rounded-xl hover:bg-white dark:hover:bg-slate-700 shadow-lg active:scale-95 transition-transform text-[var(--text-main)]" title="Osciloscopio"><i data-lucide="activity" class="w-5 h-5"></i></button>
+                <button onclick="zoomIn()" class="btn-icon-glass p-2.5 rounded-xl hover:bg-white dark:hover:bg-slate-700 shadow-lg active:scale-95 transition-transform text-[var(--text-main)]"><i data-lucide="plus" class="w-5 h-5"></i></button>
+                <button onclick="resetView()" class="btn-icon-glass p-2.5 rounded-xl hover:bg-white dark:hover:bg-slate-700 shadow-lg active:scale-95 transition-transform text-[var(--text-main)]"><i data-lucide="focus" class="w-5 h-5"></i></button>
+                <button onclick="zoomOut()" class="btn-icon-glass p-2.5 rounded-xl hover:bg-white dark:hover:bg-slate-700 shadow-lg active:scale-95 transition-transform text-[var(--text-main)]"><i data-lucide="minus" class="w-5 h-5"></i></button>
+            </div>
+        </main>
 
-<!-- ═══════ SPREAD 7: QUIZ + PROBLEMAS ═══════ -->
-<div class="spread" data-spread="7">
-<div class="page page-left">
-<h2 class="section-title"><i class="fas fa-check-circle"></i> Evaluación — Preguntas ICFES</h2>
-<div class="quiz-q" id="q1"><h4>1. Ambulancia se acerca. ¿Qué pasa con f'?</h4>
-<div class="quiz-opt" onclick="ck(this,'q1',0)">A) Disminuye</div><div class="quiz-opt" onclick="ck(this,'q1',1)">B) Aumenta ✓</div><div class="quiz-opt" onclick="ck(this,'q1',0)">C) No cambia</div><div class="quiz-opt" onclick="ck(this,'q1',0)">D) Se duplica</div>
-<div class="quiz-feedback" id="q1-fb">Al acercarse, los frentes se comprimen → f' aumenta.</div></div>
-<div class="quiz-q" id="q2"><h4>2. El número de Mach se define como:</h4>
-<div class="quiz-opt" onclick="ck(this,'q2',0)">A) \(c/v_f\)</div><div class="quiz-opt" onclick="ck(this,'q2',1)">B) \(v_f/c\) ✓</div><div class="quiz-opt" onclick="ck(this,'q2',0)">C) \(v_f \cdot c\)</div><div class="quiz-opt" onclick="ck(this,'q2',0)">D) \(v_f + c\)</div>
-<div class="quiz-feedback" id="q2-fb">\(M=v_f/c\)</div></div>
-<div class="quiz-q" id="q3"><h4>3. Fórmula general del Doppler acústico:</h4>
-<div class="quiz-opt" onclick="ck(this,'q3',0)">A) \(f'=f_0 v_s/v_o\)</div><div class="quiz-opt" onclick="ck(this,'q3',1)">B) \(f'=f_0 \frac{c \pm v_o}{c \mp v_f}\) ✓</div><div class="quiz-opt" onclick="ck(this,'q3',0)">C) \(f'=f_0(c+v_f)\)</div><div class="quiz-opt" onclick="ck(this,'q3',0)">D) \(f'=c/\lambda\)</div>
-<div class="quiz-feedback" id="q3-fb">Ecuación general con convención de signos.</div></div>
-<div class="quiz-q" id="q4"><h4>4. Avión a Mach 2. Ángulo del cono:</h4>
-<div class="quiz-opt" onclick="ck(this,'q4',0)">A) 15°</div><div class="quiz-opt" onclick="ck(this,'q4',1)">B) 30° ✓</div><div class="quiz-opt" onclick="ck(this,'q4',0)">C) 45°</div><div class="quiz-opt" onclick="ck(this,'q4',0)">D) 60°</div>
-<div class="quiz-feedback" id="q4-fb">\(\theta=\arcsin(1/2)=30°\)</div></div>
-<div class="quiz-q" id="q5"><h4>5. Redshift de una galaxia indica que:</h4>
-<div class="quiz-opt" onclick="ck(this,'q5',0)">A) Se acerca</div><div class="quiz-opt" onclick="ck(this,'q5',1)">B) Se aleja ✓</div><div class="quiz-opt" onclick="ck(this,'q5',0)">C) Está en reposo</div><div class="quiz-opt" onclick="ck(this,'q5',0)">D) Gira</div>
-<div class="quiz-feedback" id="q5-fb">Redshift → λ aumenta → fuente se aleja.</div></div>
-<div class="quiz-q" id="q6"><h4>6. Ecografía Doppler mide:</h4>
-<div class="quiz-opt" onclick="ck(this,'q6',0)">A) Temperatura</div><div class="quiz-opt" onclick="ck(this,'q6',1)">B) Velocidad flujo sanguíneo ✓</div><div class="quiz-opt" onclick="ck(this,'q6',0)">C) Densidad ósea</div><div class="quiz-opt" onclick="ck(this,'q6',0)">D) Presión arterial</div>
-<div class="quiz-feedback" id="q6-fb">Mide la velocidad del flujo de sangre por cambio de frecuencia.</div></div>
-<div class="quiz-q" id="q7"><h4>7. \(v_f=0\), observador acerca a 50 m/s (c=340, f₀=400 Hz):</h4>
-<div class="quiz-opt" onclick="ck(this,'q7',0)">A) 341 Hz</div><div class="quiz-opt" onclick="ck(this,'q7',1)">B) 458,8 Hz ✓</div><div class="quiz-opt" onclick="ck(this,'q7',0)">C) 400 Hz</div><div class="quiz-opt" onclick="ck(this,'q7',0)">D) 520 Hz</div>
-<div class="quiz-feedback" id="q7-fb">\(f'=400(340+50)/340 \approx 458{,}8\) Hz</div></div>
-<div class="quiz-q" id="q8"><h4>8. Cuando ocurre el boom sónico, M es:</h4>
-<div class="quiz-opt" onclick="ck(this,'q8',0)">A) M < 1</div><div class="quiz-opt" onclick="ck(this,'q8',0)">B) M = 0</div><div class="quiz-opt" onclick="ck(this,'q8',1)">C) M ≥ 1 ✓</div><div class="quiz-opt" onclick="ck(this,'q8',0)">D) M = 0,5</div>
-<div class="quiz-feedback" id="q8-fb">El boom sónico ocurre cuando \(v_f \geq c\), es decir, \(M \geq 1\).</div></div>
-<span class="page-num">13</span>
-</div>
-<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
-<div class="page page-right">
-<h2 class="section-title"><i class="fas fa-pen-fancy"></i> Problemas de Desarrollo</h2>
-<div class="example-box" style="border-left-color:var(--accent3)"><p style="font-weight:800;color:var(--accent3);font-size:.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Problema 1</p><p>Tren acerca a 35 m/s, silbato 600 Hz (\(c=340\)). Hallar \(f'\) acercando y alejándose.</p>
-<details><summary>Ver solución</summary><p>\(f'_{ac}=600 \times 340/305 \approx 668{,}9\) Hz. \(f'_{al}=600 \times 340/375 \approx 544\) Hz.</p></details></div>
-<div class="example-box" style="border-left-color:var(--accent3)"><p style="font-weight:800;color:var(--accent3);font-size:.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Problema 2</p><p>Murciélago emite 40 kHz, vuela a 10 m/s hacia pared. ¿Frecuencia del eco?</p>
-<details><summary>Ver solución</summary><p>Doble Doppler: \(f_1=40000 \times 340/330 \approx 41212\) Hz. \(f_2=41212 \times 350/340 \approx 42424\) Hz.</p></details></div>
-<div class="example-box" style="border-left-color:var(--accent3)"><p style="font-weight:800;color:var(--accent3);font-size:.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Problema 3</p><p>Estrella: \(\lambda_0=589\) nm, se observa \(\lambda'=597\) nm. Hallar \(v_r\) y tipo de corrimiento.</p>
-<details><summary>Ver solución</summary><p>\(z=8/589 \approx 0{,}01358\). Redshift (se aleja). \(v_r \approx 4{,}07 \times 10^6\) m/s.</p></details></div>
+        <!-- Panel Derecho -->
+        <aside id="right-panel" class="w-80 bg-[var(--bg-surface)] border-l border-[var(--border-color)] flex flex-col shadow-2xl z-20 relative">
+            <div id="drag-right" class="resizer absolute top-0 left-0 h-full w-3 -ml-1.5"><div class="resizer-pill"></div></div>
+            <div class="p-4 border-b border-[var(--border-color)] bg-gradient-to-l from-indigo-50/30 to-transparent dark:from-slate-800/30 flex justify-between items-center">
+                <h2 class="font-bold text-sm uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-4 h-4"></i> Telemetría</h2>
+            </div>
+            <div class="flex-1 overflow-y-auto custom-scroll p-5 space-y-6">
+                <div class="bg-[var(--bg-canvas)] p-4 rounded-2xl border border-[var(--border-color)] shadow-inner">
+                    <h3 class="text-[10px] font-black text-[var(--text-muted)] uppercase mb-2 tracking-widest opacity-70">Modelo Matemático</h3>
+                    <div class="overflow-x-auto py-2">$$ f' = f_s \left( \frac{c - \vec{v}_o \cdot \hat{r}}{c - \vec{v}_s \cdot \hat{r}} \right) $$</div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl border border-blue-100 dark:border-blue-800">
+                        <span class="text-[10px] text-blue-600 dark:text-blue-400 font-bold uppercase block mb-1">Longitud Onda Base ($\lambda_0$)</span>
+                        <div id="calc-lambda" class="text-lg font-mono font-bold text-[var(--text-main)]">-- m</div>
+                    </div>
+                     <div class="bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-xl border border-emerald-100 dark:border-emerald-800">
+                        <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase block mb-1">Vel. Fuente ($v_s$)</span>
+                        <div id="calc-vrel" class="text-lg font-mono font-bold text-[var(--text-main)]">-- m/s</div>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 border border-[var(--border-color)] shadow-lg group">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
+                    <span class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">Shift (Desplazamiento)</span>
+                    <div id="calc-result" class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 mt-3 tracking-tighter">-- Hz</div>
+                    <div class="mt-5 h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div id="doppler-bar" class="h-full w-1/2 bg-indigo-500 relative transition-all duration-300 shadow-[0_0_15px_currentColor]"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-[9px] font-bold text-[var(--text-muted)] uppercase"><span>Redshift</span><span>Blueshift</span></div>
+                </div>
+            </div>
+        </aside>
+    </div>
 
-<h3 class="sub-title">Autoevaluación</h3>
-<table class="styled-table"><thead><tr><th>Competencia</th><th>✅</th><th>⚡</th><th>❌</th></tr></thead>
-<tbody>
-<tr><td>Comprendo el concepto del efecto Doppler</td><td></td><td></td><td></td></tr>
-<tr><td>Aplico la fórmula general correctamente</td><td></td><td></td><td></td></tr>
-<tr><td>Distingo fuente/observador en movimiento</td><td></td><td></td><td></td></tr>
-<tr><td>Comprendo el cono de Mach y M</td><td></td><td></td><td></td></tr>
-<tr><td>Aplico el Doppler relativista</td><td></td><td></td><td></td></tr>
-<tr><td>Identifico aplicaciones tecnológicas</td><td></td><td></td><td></td></tr>
-</tbody></table>
-<span class="page-num">14</span>
-</div>
-</div>
+    <!-- Footer -->
+    <footer class="h-8 bg-[var(--bg-surface)] border-t border-[var(--border-color)] flex items-center justify-center text-[10px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-widest select-none z-30">
+        Desarrollado por Msc Néstor Fabio Montoya Palacios & Gemini AI
+    </footer>
 
-<!-- ═══════ SPREAD 8: RESUMEN + CONTRAPORTADA ═══════ -->
-<div class="spread" data-spread="8">
-<div class="page page-left">
-<h2 class="section-title"><i class="fas fa-list-check"></i> Resumen de Fórmulas</h2>
-<table class="styled-table"><thead><tr><th>Concepto</th><th>Fórmula</th></tr></thead>
-<tbody>
-<tr><td>General acústica</td><td>\(f'=f_0 \frac{c \pm v_o}{c \mp v_f}\)</td></tr>
-<tr><td>Fuente móvil</td><td>\(f'=f_0 \frac{c}{c \mp v_f}\)</td></tr>
-<tr><td>Obs. móvil</td><td>\(f'=f_0 \frac{c \pm v_o}{c}\)</td></tr>
-<tr><td>Número de Mach</td><td>\(M=v_f/c\)</td></tr>
-<tr><td>Ángulo cono</td><td>\(\theta=\arcsin(1/M)\)</td></tr>
-<tr><td>Relativista (f)</td><td>\(f'=f_0\sqrt{\frac{c+v_r}{c-v_r}}\)</td></tr>
-<tr><td>Relativista (λ)</td><td>\(\lambda'=\lambda_0\sqrt{\frac{c-v_r}{c+v_r}}\)</td></tr>
-<tr><td>Corrimiento z</td><td>\(z=\Delta\lambda/\lambda_0\)</td></tr>
-<tr><td>Ley de Hubble</td><td>\(v=H_0 d\)</td></tr>
-<tr><td>Doble Doppler</td><td>\(\Delta f=2v f_0/c\)</td></tr>
-</tbody></table>
-<h3 class="sub-title">Glosario</h3>
-<table class="styled-table"><thead><tr><th>Término</th><th>Definición</th></tr></thead>
-<tbody>
-<tr><td>Efecto Doppler</td><td>Cambio de f por movimiento relativo fuente-observador</td></tr>
-<tr><td>Frente de onda</td><td>Superficie que conecta puntos en la misma fase</td></tr>
-<tr><td>Número de Mach</td><td>Razón \(v_f/c\)</td></tr>
-<tr><td>Boom sónico</td><td>Onda de choque al alcanzar \(M \geq 1\)</td></tr>
-<tr><td>Redshift</td><td>\(\lambda\) aumenta (fuente se aleja)</td></tr>
-<tr><td>Blueshift</td><td>\(\lambda\) disminuye (fuente se acerca)</td></tr>
-<tr><td>Velocidad radial</td><td>Componente de v en dirección observador-fuente</td></tr>
-</tbody></table>
-<h3 class="sub-title">Bibliografía</h3>
-<p style="font-size:.8em">• Serway & Jewett (2018). <em>Física para ciencias e ingeniería</em>, 10.ª ed.<br>• Resnick, Halliday & Krane (2002). <em>Física</em>, Vol. 1.<br>• Tipler & Mosca (2008). <em>Física para la ciencia y la tecnología</em>.<br>• Doppler, C. (1842). <em>Über das farbige Licht der Doppelsterne</em>.<br>• Hubble, E. (1929). PNAS, 15(3), 168–173.</p>
-<span class="page-num">15</span>
-</div>
-<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
-<div class="page page-right cover-page" style="background:linear-gradient(160deg,#0d1628,#1a3a6a,#1565c0)!important">
-<div class="cover-wave" style="font-size:3em">🔊</div>
-<h1 style="font-size:1.7em;color:#fff;font-family:'Playfair Display',serif;position:relative;z-index:1">Fin del Cuaderno</h1>
-<p style="color:rgba(255,255,255,.8);margin:10px 0;position:relative;z-index:1;font-style:italic">"El movimiento relativo cambia la frecuencia percibida"</p>
-<p style="color:rgba(255,255,255,.5);font-size:.78em;position:relative;z-index:1">— Christian Doppler, 1842</p>
-<p style="color:rgba(255,255,255,.6);font-size:.82em;margin-top:20px;position:relative;z-index:1">Juan Jos&eacute; P&eacute;rez Herrera & Deisy Patricia Angarita<br>Edici&oacute;n digital interactiva<br><small>Universidad Tecnol&oacute;gica de Pereira — 2026</small></p>
-<span class="page-num" style="color:rgba(255,255,255,.3)">16</span>
-</div>
-</div>
+    <!-- MODAL CONFIG VISUAL -->
+    <div id="modal-config" class="fixed inset-0 z-[100] hidden modal-overlay bg-black/40 flex items-center justify-center p-4">
+        <div class="bg-[var(--bg-surface)] w-full max-w-sm rounded-3xl shadow-2xl modal-content border border-[var(--border-color)]">
+            <div class="p-6 border-b border-[var(--border-color)] flex justify-between items-center">
+                <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="sliders-horizontal" class="text-blue-500"></i> Visualización</h2>
+                <button onclick="toggleModal('config')" class="p-2 hover:bg-[var(--bg-canvas)] rounded-full"><i data-lucide="x"></i></button>
+            </div>
+            <div class="p-6 space-y-6">
+                <div>
+                    <label class="text-sm font-bold text-[var(--text-main)] block mb-3">Color de Onda</label>
+                    <div class="flex gap-3 justify-between">
+                        <button onclick="updateWaveConfig('color', '#3b82f6')" class="w-10 h-10 rounded-full bg-blue-500 shadow-md ring-2 ring-offset-2 ring-transparent hover:ring-blue-300 transition-all"></button>
+                        <button onclick="updateWaveConfig('color', '#10b981')" class="w-10 h-10 rounded-full bg-emerald-500 shadow-md ring-2 ring-offset-2 ring-transparent hover:ring-emerald-300 transition-all"></button>
+                        <button onclick="updateWaveConfig('color', '#f43f5e')" class="w-10 h-10 rounded-full bg-rose-500 shadow-md ring-2 ring-offset-2 ring-transparent hover:ring-rose-300 transition-all"></button>
+                        <button onclick="updateWaveConfig('color', '#8b5cf6')" class="w-10 h-10 rounded-full bg-violet-500 shadow-md ring-2 ring-offset-2 ring-transparent hover:ring-violet-300 transition-all"></button>
+                        <button onclick="updateWaveConfig('color', '#f59e0b')" class="w-10 h-10 rounded-full bg-amber-500 shadow-md ring-2 ring-offset-2 ring-transparent hover:ring-amber-300 transition-all"></button>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-sm font-bold text-[var(--text-main)] block mb-3">Estilo de Trazo</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="updateWaveConfig('style', [])" class="style-btn active" id="btn-style-solid">Sólido</button>
+                        <button onclick="updateWaveConfig('style', [10, 10])" class="style-btn" id="btn-style-dashed">Rayas</button>
+                        <button onclick="updateWaveConfig('style', [3, 5])" class="style-btn" id="btn-style-dotted">Puntos</button>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-sm font-bold text-[var(--text-main)]">Grosor de Onda</label>
+                        <span id="width-val" class="text-xs font-mono text-[var(--text-muted)]">2px</span>
+                    </div>
+                    <input type="range" min="1" max="6" step="0.5" value="2" id="input-wave-width" oninput="updateWaveConfig('width', this.value)" class="slider-colored" style="color: #475569">
+                </div>
+            </div>
+        </div>
+    </div>
 
-</div><!-- end #book -->
-</div><!-- end #book-container -->
+    <!-- MODAL TEORÍA (AMPLIADO) -->
+    <div id="modal-theory" class="fixed inset-0 z-[100] hidden modal-overlay bg-black/40 flex items-center justify-center p-4">
+        <div class="bg-[var(--bg-surface)] w-full max-w-4xl rounded-3xl shadow-2xl modal-content max-h-[90vh] flex flex-col border border-[var(--border-color)]">
+            <div class="p-6 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--bg-canvas)]">
+                <h2 class="text-2xl font-bold text-[var(--text-main)] flex items-center gap-3">
+                    <div class="p-2 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg text-indigo-600"><i data-lucide="book-open" class="w-6 h-6"></i></div>
+                    Enciclopedia Física: Efecto Doppler
+                </h2>
+                <button onclick="toggleModal('theory')" class="p-2 hover:bg-[var(--bg-surface)] rounded-full transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-8 overflow-y-auto custom-scroll theory-section">
+                
+                <h3 class="text-lg">1. Definición y Concepto Fundamental</h3>
+                <p>El <strong>Efecto Doppler</strong> es el fenómeno físico por el cual la frecuencia aparente de una onda (sonora, lumínica o electromagnética) cambia cuando existe un movimiento relativo entre la fuente emisora y el observador. Fue descubierto por el físico austriaco Christian Doppler en 1842.</p>
+                <p>Una analogía clásica: imagina que estás en la playa y las olas llegan cada 5 segundos. Si nadas hacia el mar (acercándote a la fuente de las olas), te golpearás con ellas más frecuentemente (mayor frecuencia). Si nadas hacia la orilla (alejándote), las olas tardarán más en alcanzarte (menor frecuencia).</p>
 
-<!-- NAV BAR -->
-<div id="nav-bar">
-<button class="nav-btn" onclick="goTo(0)" title="Portada" style="background:linear-gradient(135deg,#f59e0b,#ef4444)"><i class="fas fa-book-open"></i></button>
-<button class="nav-btn" id="btn-prev" onclick="prev()" title="Anterior"><i class="fas fa-chevron-left"></i></button>
-<button class="nav-btn" id="btn-next" onclick="next()" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
-<button class="nav-btn" onclick="goTo(0)" title="Índice"><i class="fas fa-list"></i></button>
-</div>
+                <h3 class="text-lg">2. El Modelo Matemático Vectorial (Real)</h3>
+                <p>Aunque en la escuela se enseña una fórmula escalar simple ($f' = f(c \pm v)/(c \mp v)$), esta solo funciona si la fuente y el observador se mueven en la misma línea recta. En el mundo real (y en esta simulación avanzada), la posición es relativa en 2D o 3D.</p>
+                <p>La ecuación correcta y general es:</p>
+                <div class="math-block text-center text-xl">
+                    $$ f' = f_s \left( \frac{c - \vec{v}_o \cdot \hat{r}}{c - \vec{v}_s \cdot \hat{r}} \right) $$
+                </div>
+                <ul>
+                    <li><strong>$f'$:</strong> Frecuencia percibida (lo que escucha el observador).</li>
+                    <li><strong>$f_s$:</strong> Frecuencia base de la fuente.</li>
+                    <li><strong>$c$:</strong> Velocidad del sonido (aprox. 340 m/s en aire).</li>
+                    <li><strong>$\vec{v} \cdot \hat{r}$:</strong> Es el producto punto. Representa la <em>velocidad radial</em>, es decir, qué tan rápido se acerca o aleja la fuente en la dirección exacta de la línea de visión del observador.</li>
+                </ul>
 
-<!-- CHATBOT -->
-<div id="chat-bubble">💡 "La imaginación es más importante que el conocimiento." — Einstein</div>
-<button id="chat-toggle" onclick="toggleChat()" title="Chat con Científicos">
-<svg viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg">
-<!-- Einstein toggle avatar -->
-<circle cx="32" cy="34" r="22" fill="#f5deb0"/>
-<ellipse cx="32" cy="42" rx="14" ry="10" fill="#f0d5a0"/>
-<!-- Wild hair -->
-<path d="M10,28 Q8,12 18,10 Q24,6 32,8 Q40,6 46,10 Q56,12 54,28 Q56,22 52,18 Q48,14 44,16 Q40,10 36,12 Q32,8 28,12 Q24,10 20,16 Q16,14 12,18 Q8,22 10,28Z" fill="#e0e0e0"/>
-<path d="M8,30 Q6,20 14,14 Q10,20 12,28" fill="#d0d0d0"/>
-<path d="M56,30 Q58,20 50,14 Q54,20 52,28" fill="#d0d0d0"/>
-<!-- Face -->
-<ellipse cx="24" cy="32" rx="5" ry="5.5" fill="white" class="eye-blink"/>
-<ellipse cx="40" cy="32" rx="5" ry="5.5" fill="white" class="eye-blink-alt"/>
-<circle cx="24" cy="32.5" r="2.5" fill="#3a2510" class="sci-pupil" data-cx="24" data-cy="32.5"/>
-<circle cx="40" cy="32.5" r="2.5" fill="#3a2510" class="sci-pupil" data-cx="40" data-cy="32.5"/>
-<circle cx="25" cy="31" r="1" fill="white" opacity=".8"/>
-<circle cx="41" cy="31" r="1" fill="white" opacity=".8"/>
-<!-- Eyebrows -->
-<path d="M19,27 Q24,24 29,27" stroke="#888" stroke-width="1.5" fill="none"/>
-<path d="M35,27 Q40,24 45,27" stroke="#888" stroke-width="1.5" fill="none"/>
-<!-- Nose -->
-<path d="M30,36 Q32,40 34,36" stroke="#c8a882" stroke-width="1.5" fill="none"/>
-<!-- Mustache -->
-<path d="M22,43 Q26,40 32,42 Q38,40 42,43 Q38,42 32,44 Q26,42 22,43Z" fill="#c0c0c0"/>
-<!-- Smile -->
-<path d="M26,47 Q32,52 38,47" stroke="#a0785a" stroke-width="1.5" fill="none"/>
-</svg>
-</button>
-<div id="chat-panel">
-<div id="chat-header">
-<div class="sci-avatar sci-avatar-lg" id="header-avatar"></div>
-<div class="sci-info"><h3 id="sci-header-name">Albert Einstein</h3><small id="sci-header-desc">Físico teórico — Relatividad</small></div>
-<div class="header-actions"><button onclick="toggleChat()" title="Cerrar"><i class="fas fa-times"></i></button></div>
-</div>
-<div id="scientist-selector">
-<button class="sci-btn active" onclick="changePersona('einstein')"><div class="sci-avatar sci-avatar-sm" id="sel-einstein"></div>Einstein</button>
-<button class="sci-btn" onclick="changePersona('curie')"><div class="sci-avatar sci-avatar-sm" id="sel-curie"></div>Curie</button>
-<button class="sci-btn" onclick="changePersona('doppler')"><div class="sci-avatar sci-avatar-sm" id="sel-doppler"></div>Doppler</button>
-<button class="sci-btn" onclick="changePersona('feynman')"><div class="sci-avatar sci-avatar-sm" id="sel-feynman"></div>Feynman</button>
-<button class="sci-btn" onclick="changePersona('hubble')"><div class="sci-avatar sci-avatar-sm" id="sel-hubble"></div>Hubble</button>
-</div>
-<div id="chat-messages"></div>
-<div id="api-key-section">
-<p>🔑 Ingresa tu API Key de <b>Gemini</b> para chatear:</p>
-<input type="password" id="api-key-input" placeholder="AIzaSy...">
-<button onclick="saveApiKey()"><i class="fas fa-link"></i> Conectar</button>
-</div>
-<div id="chat-suggestions" style="display:none">
-<button class="chat-suggest" onclick="askSuggestion(this)">¿Qué es el efecto Doppler?</button>
-<button class="chat-suggest" onclick="askSuggestion(this)">Explica el cono de Mach</button>
-<button class="chat-suggest" onclick="askSuggestion(this)">¿Qué es el redshift?</button>
-</div>
-<div id="chat-input-area" style="display:none">
-<input type="text" id="chat-input" placeholder="Pregunta sobre el efecto Doppler..." onkeydown="if(event.key==='Enter')sendChat()">
-<button id="chat-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
-</div>
-</div>
+                <h3 class="text-lg">3. Fenómenos Críticos: La Barrera del Sonido</h3>
+                <p>Cuando la velocidad de la fuente ($v_s$) iguala a la velocidad del sonido ($c$), ocurre algo fascinante. El denominador de la ecuación se vuelve cero. Matemáticamente, la frecuencia tiende a infinito. Físicamente, todas las ondas de presión se apilan en un mismo punto frente al objeto, creando una onda de choque de altísima energía conocida como <strong>Estallido Sónico</strong> o "Sonic Boom".</p>
 
-<!-- ZOOM + NARRATOR -->
-<div id="zoom-controls">
-<button onclick="zoomIn()" title="Zoom in"><i class="fas fa-search-plus"></i></button>
-<div id="zoom-level">100%</div>
-<button onclick="zoomOut()" title="Zoom out"><i class="fas fa-search-minus"></i></button>
-</div>
-<button id="narrator-btn" onclick="toggleNarrator()" title="Narrador de voz"><i class="fas fa-volume-up"></i></button>
-<div id="narrator-status">🔊 Narrando...</div>
+                <h3 class="text-lg">4. Cono de Mach (Supersónico)</h3>
+                <p>Cuando $v_s > c$ (régimen supersónico), la fuente viaja más rápido que sus propias ondas. Los frentes de onda se acumulan formando un <strong>Cono de Mach</strong> cuyo semi-ángulo $\theta$ viene dado por:</p>
+                <div class="math-block text-center text-xl">
+                    $$ \sin\theta = \frac{c}{v_s} = \frac{1}{\text{Mach}} $$
+                </div>
+                <p>El número de Mach se define como la relación entre la velocidad del objeto y la velocidad del sonido:</p>
+                <div class="math-block text-center text-xl">
+                    $$ M = \frac{v_s}{c} $$
+                </div>
+                <ul>
+                    <li><strong>$M < 1$:</strong> Régimen subsónico. Las ondas se propagan en todas direcciones delante de la fuente.</li>
+                    <li><strong>$M = 1$:</strong> Régimen transónico. Todas las ondas se comprimen en un plano perpendicular ($\theta = 90°$).</li>
+                    <li><strong>$M > 1$:</strong> Régimen supersónico. Se forma el cono de Mach. A mayor Mach, menor el ángulo del cono.</li>
+                </ul>
+                <p>Ernst Mach (1838-1916), filósofo y físico austriaco, fue el primero en fotografiar ondas de choque de proyectiles supersónicos en 1887, dando nombre al fenómeno.</p>
 
-<script>
-// ========== NAVIGATION ==========
-const spreads=document.querySelectorAll('.spread');const totalSpreads=spreads.length;let current=0;let flipping=false;
-function updateUI(){spreads.forEach((s,i)=>{s.classList.remove('active','flip-out-fwd','flip-out-back','flip-in-fwd','flip-in-back');s.style.display=(i===current)?'flex':'none';if(i===current)s.classList.add('active')});document.getElementById('btn-prev').disabled=current===0;document.getElementById('btn-next').disabled=current===totalSpreads-1;document.getElementById('progress-bar').style.width=(current/(totalSpreads-1)*100)+'%';document.getElementById('page-info').textContent='Pág. '+(current*2+1)+'-'+(current*2+2)+' de '+(totalSpreads*2);if(typeof MathJax!=='undefined'&&MathJax.typesetPromise)MathJax.typesetPromise([spreads[current]]).catch(()=>{})}
-function goTo(idx){if(idx<0||idx>=totalSpreads||idx===current||flipping)return;flipping=true;const fwd=idx>current;const oldS=spreads[current],newS=spreads[idx];spreads.forEach(s=>s.classList.remove('active','flip-out-fwd','flip-out-back','flip-in-fwd','flip-in-back'));oldS.style.display='flex';oldS.classList.add(fwd?'flip-out-fwd':'flip-out-back');setTimeout(()=>{oldS.style.display='none';oldS.classList.remove('flip-out-fwd','flip-out-back');newS.style.display='flex';newS.classList.add(fwd?'flip-in-fwd':'flip-in-back');current=idx;setTimeout(()=>{newS.classList.remove('flip-in-fwd','flip-in-back');updateUI();flipping=false},500)},420)}
-function next(){goTo(current+1)}function prev(){goTo(current-1)}
-document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')next();else if(e.key==='ArrowLeft')prev()});
-updateUI();
+                <h3 class="text-lg">5. Mapeo Cromático Doppler (Redshift / Blueshift)</h3>
+                <p>En esta simulación, las ondas cambian de color según el desplazamiento Doppler: <strong style="color:#6366f1">azul</strong> cuando la fuente se acerca al observador (compresión de longitud de onda, o <em>blueshift</em>) y <strong style="color:#f43f5e">rojo</strong> cuando se aleja (<em>redshift</em>). Esta convención es la misma utilizada en astrofísica para medir velocidades radiales de galaxias.</p>
+                <div class="math-block text-center text-xl">
+                    $$ z = \frac{\Delta\lambda}{\lambda_0} = \frac{v_{radial}}{c} $$
+                </div>
 
-// ===== QUIZ =====
-function ck(el,qid,ok){const c=document.getElementById(qid);if(c.dataset.a)return;c.dataset.a='1';c.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');if(ok)el.classList.add('correct');else{el.classList.add('wrong');c.querySelectorAll('.quiz-opt').forEach(o=>{if(o.getAttribute('onclick').includes(',1)'))o.classList.add('correct')})}const fb=document.getElementById(qid+'-fb');if(fb){fb.style.display='block';if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([fb]).catch(()=>{})}}
+                <h3 class="text-lg">6. Aplicaciones en el Mundo Real</h3>
+                <ul>
+                    <li><strong>Radares de Tráfico:</strong> La policía usa pistolas de radar que emiten ondas de radio. Al rebotar en tu coche, la frecuencia cambia. El radar mide ese cambio y calcula tu velocidad exacta.</li>
+                    <li><strong>Medicina (Ecografía Doppler):</strong> Se usa para ver el flujo de sangre en arterias y venas. Si la sangre se mueve, el sonido del ultrasonido cambia, permitiendo detectar obstrucciones.</li>
+                    <li><strong>Astronomía (Redshift/Blueshift):</strong> Los astrónomos saben que una galaxia se aleja si su luz se ve más roja (frecuencia más baja) o se acerca si se ve más azul (frecuencia más alta). Así descubrimos la expansión del universo.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
-// ===== SVG SCIENTIST AVATARS =====
-const SCI_SVG = {
-  einstein: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="32" cy="36" r="20" fill="#f5deb0"/>
-    <ellipse cx="32" cy="44" rx="13" ry="9" fill="#f0d5a0"/>
-    <path d="M12,30 Q10,14 20,11 Q26,6 32,9 Q38,6 44,11 Q54,14 52,30 Q54,24 50,20 Q46,16 42,18 Q38,12 34,14 Q30,10 26,14 Q22,12 18,18 Q14,16 12,20 Q10,24 12,30Z" fill="#e0e0e0"/>
-    <path d="M9,32 Q7,22 15,16 Q11,22 13,30" fill="#d0d0d0"/>
-    <path d="M55,32 Q57,22 49,16 Q53,22 51,30" fill="#d0d0d0"/>
-    <ellipse cx="24" cy="33" rx="5" ry="5.5" fill="white" class="eye-blink"/>
-    <ellipse cx="40" cy="33" rx="5" ry="5.5" fill="white" class="eye-blink-alt"/>
-    <circle cx="24" cy="33.5" r="2.5" fill="#3a2510" class="sci-pupil" data-cx="24" data-cy="33.5"/>
-    <circle cx="40" cy="33.5" r="2.5" fill="#3a2510" class="sci-pupil" data-cx="40" data-cy="33.5"/>
-    <circle cx="25" cy="32" r="1" fill="white" opacity=".8"/>
-    <circle cx="41" cy="32" r="1" fill="white" opacity=".8"/>
-    <path d="M19,28 Q24,25 29,28" stroke="#999" stroke-width="1.5" fill="none"/>
-    <path d="M35,28 Q40,25 45,28" stroke="#999" stroke-width="1.5" fill="none"/>
-    <path d="M30,38 Q32,42 34,38" stroke="#c8a882" stroke-width="1.5" fill="none"/>
-    <path d="M22,45 Q27,42 32,44 Q37,42 42,45 Q37,44 32,46 Q27,44 22,45Z" fill="#c0c0c0"/>
-    <path d="M26,49 Q32,54 38,49" stroke="#a0785a" stroke-width="1.5" fill="none"/>
-  </svg>`,
-  curie: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="32" cy="36" r="20" fill="#fde8d0"/>
-    <ellipse cx="32" cy="44" rx="13" ry="9" fill="#f5d8b8"/>
-    <path d="M14,32 Q12,18 20,12 Q24,8 28,10 Q30,6 32,6 Q34,6 36,10 Q40,8 44,12 Q52,18 50,32 Q50,26 48,22 Q44,18 40,20 Q36,14 32,14 Q28,14 24,20 Q20,18 16,22 Q14,26 14,32Z" fill="#2c1810"/>
-    <ellipse cx="20" cy="14" rx="6" ry="4" fill="#2c1810" transform="rotate(-20 20 14)"/>
-    <ellipse cx="44" cy="14" rx="6" ry="4" fill="#2c1810" transform="rotate(20 44 14)"/>
-    <circle cx="32" cy="8" r="5" fill="#2c1810"/>
-    <ellipse cx="24" cy="34" rx="4.5" ry="5" fill="white" class="eye-blink"/>
-    <ellipse cx="40" cy="34" rx="4.5" ry="5" fill="white" class="eye-blink-alt"/>
-    <circle cx="24" cy="34.5" r="2.2" fill="#1a5c3a" class="sci-pupil" data-cx="24" data-cy="34.5"/>
-    <circle cx="40" cy="34.5" r="2.2" fill="#1a5c3a" class="sci-pupil" data-cx="40" data-cy="34.5"/>
-    <circle cx="25" cy="33" r=".9" fill="white" opacity=".8"/>
-    <circle cx="41" cy="33" r=".9" fill="white" opacity=".8"/>
-    <path d="M20,30 Q24,27 28,30" stroke="#5c3a1e" stroke-width="1.2" fill="none"/>
-    <path d="M36,30 Q40,27 44,30" stroke="#5c3a1e" stroke-width="1.2" fill="none"/>
-    <path d="M30,39 Q32,42 34,39" stroke="#d4a88a" stroke-width="1.2" fill="none"/>
-    <path d="M27,48 Q32,52 37,48" stroke="#c06060" stroke-width="1.8" fill="none"/>
-    <circle cx="16" cy="40" r="2.5" fill="#ffd700" opacity=".6"/>
-    <circle cx="48" cy="40" r="2.5" fill="#ffd700" opacity=".6"/>
-    <path d="M26,47 Q28,46 30,47" stroke="#e08080" stroke-width=".8" fill="none"/>
-  </svg>`,
-  doppler: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="32" cy="36" r="20" fill="#f5deb0"/>
-    <ellipse cx="32" cy="44" rx="13" ry="9" fill="#f0d5a0"/>
-    <path d="M16,30 Q14,16 22,12 Q28,8 32,10 Q36,8 42,12 Q50,16 48,30 Q48,24 46,20 Q42,16 38,18 Q34,14 30,18 Q26,16 22,20 Q18,24 16,30Z" fill="#5a3825"/>
-    <path d="M12,38 Q10,28 14,30 Q16,36 14,42 Q12,44 12,38Z" fill="#5a3825"/>
-    <path d="M52,38 Q54,28 50,30 Q48,36 50,42 Q52,44 52,38Z" fill="#5a3825"/>
-    <ellipse cx="24" cy="34" rx="4.5" ry="5" fill="white" class="eye-blink"/>
-    <ellipse cx="40" cy="34" rx="4.5" ry="5" fill="white" class="eye-blink-alt"/>
-    <circle cx="24" cy="34.5" r="2.2" fill="#4a6fa5" class="sci-pupil" data-cx="24" data-cy="34.5"/>
-    <circle cx="40" cy="34.5" r="2.2" fill="#4a6fa5" class="sci-pupil" data-cx="40" data-cy="34.5"/>
-    <circle cx="25" cy="33" r=".9" fill="white" opacity=".8"/>
-    <circle cx="41" cy="33" r=".9" fill="white" opacity=".8"/>
-    <path d="M20,30 Q24,27 28,30" stroke="#5a3825" stroke-width="1.5" fill="none"/>
-    <path d="M36,30 Q40,27 44,30" stroke="#5a3825" stroke-width="1.5" fill="none"/>
-    <path d="M30,39 Q32,42 34,39" stroke="#c8a882" stroke-width="1.2" fill="none"/>
-    <rect x="22" y="46" width="20" height="4" rx="2" fill="#3a2510"/>
-    <path d="M28,50 Q32,53 36,50" stroke="#a0785a" stroke-width="1.2" fill="none"/>
-    <rect x="20" y="14" width="24" height="2" rx="1" fill="#5a3825" opacity=".5"/>
-  </svg>`,
-  feynman: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="32" cy="36" r="20" fill="#f5deb0"/>
-    <ellipse cx="32" cy="44" rx="13" ry="9" fill="#f0d5a0"/>
-    <path d="M14,28 Q14,14 22,10 Q28,6 32,8 Q36,6 42,10 Q50,14 50,28 Q48,22 44,18 Q40,16 36,18 Q34,14 32,14 Q30,14 28,18 Q24,16 20,18 Q16,22 14,28Z" fill="#3a2510"/>
-    <path d="M14,28 Q12,24 16,26" fill="#3a2510"/>
-    <path d="M50,28 Q52,24 48,26" fill="#3a2510"/>
-    <path d="M20,14 Q24,10 28,14 Q26,12 22,14" fill="#3a2510"/>
-    <path d="M36,14 Q40,10 44,14 Q42,12 38,14" fill="#3a2510"/>
-    <ellipse cx="24" cy="33" rx="5" ry="5.5" fill="white" class="eye-blink"/>
-    <ellipse cx="40" cy="33" rx="5" ry="5.5" fill="white" class="eye-blink-alt"/>
-    <circle cx="24" cy="33.5" r="2.5" fill="#3a2510" class="sci-pupil" data-cx="24" data-cy="33.5"/>
-    <circle cx="40" cy="33.5" r="2.5" fill="#3a2510" class="sci-pupil" data-cx="40" data-cy="33.5"/>
-    <circle cx="25" cy="32" r="1" fill="white" opacity=".8"/>
-    <circle cx="41" cy="32" r="1" fill="white" opacity=".8"/>
-    <path d="M19,28 Q24,25 29,29" stroke="#3a2510" stroke-width="1.8" fill="none"/>
-    <path d="M35,29 Q40,25 45,28" stroke="#3a2510" stroke-width="1.8" fill="none"/>
-    <path d="M30,38 Q32,41 34,38" stroke="#c8a882" stroke-width="1.2" fill="none"/>
-    <path d="M24,48 Q28,44 32,48 Q36,44 40,48 Q36,52 32,50 Q28,52 24,48Z" fill="white"/>
-    <path d="M24,48 Q28,45 32,48" stroke="#a0785a" stroke-width=".8" fill="none"/>
-    <path d="M32,48 Q36,45 40,48" stroke="#a0785a" stroke-width=".8" fill="none"/>
-  </svg>`,
-  hubble: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="32" cy="36" r="20" fill="#f5deb0"/>
-    <ellipse cx="32" cy="44" rx="13" ry="9" fill="#f0d5a0"/>
-    <path d="M16,28 Q16,16 22,12 Q28,10 32,12 Q36,10 42,12 Q48,16 48,28 Q46,22 42,20 Q38,18 34,20 Q30,18 26,20 Q22,18 18,22 Q16,24 16,28Z" fill="#4a3828"/>
-    <path d="M16,28 Q14,26 16,24" fill="#4a3828"/>
-    <path d="M48,28 Q50,26 48,24" fill="#4a3828"/>
-    <ellipse cx="24" cy="33" rx="4.5" ry="5" fill="white" class="eye-blink"/>
-    <ellipse cx="40" cy="33" rx="4.5" ry="5" fill="white" class="eye-blink-alt"/>
-    <circle cx="24" cy="33.5" r="2.2" fill="#4a6fa5" class="sci-pupil" data-cx="24" data-cy="33.5"/>
-    <circle cx="40" cy="33.5" r="2.2" fill="#4a6fa5" class="sci-pupil" data-cx="40" data-cy="33.5"/>
-    <circle cx="25" cy="32" r=".9" fill="white" opacity=".8"/>
-    <circle cx="41" cy="32" r=".9" fill="white" opacity=".8"/>
-    <path d="M20,29 Q24,26 28,29" stroke="#4a3828" stroke-width="1.5" fill="none"/>
-    <path d="M36,29 Q40,26 44,29" stroke="#4a3828" stroke-width="1.5" fill="none"/>
-    <path d="M30,38 Q32,41 34,38" stroke="#c8a882" stroke-width="1.2" fill="none"/>
-    <path d="M24,45 Q28,43 32,45 Q36,43 40,45 Q36,44 32,46 Q28,44 24,45Z" fill="#6a5040"/>
-    <path d="M28,49 Q32,52 36,49" stroke="#a0785a" stroke-width="1.2" fill="none"/>
-    <line x1="44" y1="44" x2="52" y2="38" stroke="#6a5040" stroke-width="2.5" stroke-linecap="round"/>
-    <circle cx="53" cy="37" r="2.5" fill="none" stroke="#6a5040" stroke-width="1.5"/>
-    <rect x="28" y="56" width="8" height="3" rx="1.5" fill="#8b0000"/>
-    <path d="M30,56 L34,56 L32,54 Z" fill="#8b0000"/>
-  </svg>`
-};
+    <!-- MODAL MANUAL (AMPLIADO) -->
+    <div id="modal-manual" class="fixed inset-0 z-[100] hidden modal-overlay bg-black/40 flex items-center justify-center p-4">
+         <div class="bg-[var(--bg-surface)] w-full max-w-2xl rounded-3xl shadow-2xl modal-content border border-[var(--border-color)]">
+            <div class="p-6 border-b border-[var(--border-color)] flex justify-between items-center"><h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="help-circle" class="text-emerald-500"></i> Manual de Usuario</h2><button onclick="toggleModal('manual')" class="p-2 hover:bg-[var(--bg-canvas)] rounded-full"><i data-lucide="x"></i></button></div>
+            <div class="p-8 space-y-6 overflow-y-auto custom-scroll max-h-[80vh]">
+                 
+                 <div class="flex gap-4 items-start">
+                     <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0"><i data-lucide="mouse-pointer-2"></i></div>
+                     <div>
+                         <h4 class="font-bold text-[var(--text-main)] text-lg mb-1">Interacción Básica</h4>
+                         <p class="text-sm text-[var(--text-muted)] mb-2">El laboratorio es un entorno físico interactivo. Puedes manipular los objetos directamente:</p>
+                         <ul class="list-disc pl-4 text-sm text-[var(--text-muted)] space-y-1">
+                             <li><strong>Mover Objetos:</strong> Haz clic y arrastra el <strong>Coche/Jet</strong> o el <strong>Micrófono</strong> para cambiar sus posiciones iniciales.</li>
+                             <li><strong>Panorámica (Pan):</strong> Haz clic y arrastra en cualquier espacio vacío del fondo para mover la cámara.</li>
+                             <li><strong>Zoom:</strong> Usa la rueda del ratón o el gesto de "pellizcar" en pantallas táctiles para acercar o alejar la vista.</li>
+                         </ul>
+                     </div>
+                 </div>
 
-// Inject SVG avatars into selector buttons
-Object.keys(SCI_SVG).forEach(id=>{
-  const el=document.getElementById('sel-'+id);
-  if(el) el.innerHTML=SCI_SVG[id];
-});
-// Set header avatar
-function setHeaderAvatar(id){
-  const el=document.getElementById('header-avatar');
-  if(el) el.innerHTML=SCI_SVG[id]||'';
-}
-setHeaderAvatar('einstein');
+                 <div class="flex gap-4 items-start">
+                     <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0"><i data-lucide="sliders"></i></div>
+                     <div>
+                         <h4 class="font-bold text-[var(--text-main)] text-lg mb-1">Control de Variables</h4>
+                         <p class="text-sm text-[var(--text-muted)] mb-2">El panel izquierdo contiene los controles físicos:</p>
+                         <ul class="list-disc pl-4 text-sm text-[var(--text-muted)] space-y-1">
+                             <li><strong>Velocidad ($v_s$):</strong> Controla qué tan rápido se mueve la fuente. Puede ser negativa (movimiento hacia la izquierda).</li>
+                             <li><strong>Frecuencia ($f_s$):</strong> Cambia qué tan rápido se generan las ondas.</li>
+                             <li><strong>Vel. Sonido ($c$):</strong> Modifica la velocidad del medio. Bajarla hace más fácil romper la barrera del sonido.</li>
+                         </ul>
+                     </div>
+                 </div>
 
-// ===== EYE TRACKING (pupils follow mouse) =====
-document.addEventListener('mousemove', e=>{
-  document.querySelectorAll('.sci-pupil').forEach(p=>{
-    const svg = p.closest('svg');
-    if(!svg) return;
-    const rect = svg.getBoundingClientRect();
-    const svgW = rect.width, svgH = rect.height;
-    const vb = svg.viewBox.baseVal;
-    const cx = parseFloat(p.getAttribute('data-cx'));
-    const cy = parseFloat(p.getAttribute('data-cy'));
-    const mx = ((e.clientX - rect.left) / svgW) * vb.width;
-    const my = ((e.clientY - rect.top) / svgH) * vb.height;
-    const dx = mx - cx, dy = my - cy;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    const maxD = 1.8;
-    const ox = dist > 0 ? (dx/dist)*Math.min(maxD, dist*0.05) : 0;
-    const oy = dist > 0 ? (dy/dist)*Math.min(maxD, dist*0.05) : 0;
-    p.style.transform = `translate(${ox}px, ${oy}px)`;
-  });
-});
+                 <div class="flex gap-4 items-start">
+                     <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0"><i data-lucide="volume-2"></i></div>
+                     <div>
+                         <h4 class="font-bold text-[var(--text-main)] text-lg mb-1">Sistema de Audio Realista</h4>
+                         <p class="text-sm text-[var(--text-muted)]">A diferencia de otros simuladores, aquí el sonido se genera en tiempo real <strong>solo cuando un frente de onda toca físicamente al micrófono</strong>. Escucharás un "ping" rítmico que se acelera (Doppler alto) o desacelera (Doppler bajo) según la física. Usa el control de <strong>Volumen</strong> para ajustar la intensidad.</p>
+                     </div>
+                 </div>
 
-// ===== CHATBOT (Gemini 2.5 Flash) =====
-const GEMINI_MODEL='gemini-2.5-flash';const GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/'+GEMINI_MODEL+':generateContent?key=';
-const PERSONAS={einstein:{name:'Albert Einstein',desc:'Físico teórico — Relatividad',system:'Eres Albert Einstein. Responde con metáforas de la relatividad, humor filosófico y curiosidad infinita. Usa español.'},curie:{name:'Marie Curie',desc:'Física y química — Radiactividad',system:'Eres Marie Curie. Responde con rigor científico y pasión. Usa español.'},doppler:{name:'Christian Doppler',desc:'Físico — Efecto Doppler',system:'Eres Christian Doppler. Explica tu propio descubrimiento de 1842 con detalle técnico. Usa español.'},feynman:{name:'Richard Feynman',desc:'Físico — Electrodinámica cuántica',system:'Eres Feynman. Responde divertido con analogías cotidianas. Usa español.'},hubble:{name:'Edwin Hubble',desc:'Astrónomo — Expansión del universo',system:'Eres Hubble. Habla del redshift y la expansión cósmica. Usa español.'}};
-const QUOTES=['"La imaginación es más importante que el conocimiento." — Einstein','"Nada en la vida es para ser temido." — Curie','"Lo importante es no dejar de hacerse preguntas." — Einstein','"Estudia lo que más te interese irreverentemente." — Feynman'];
-let apiKey='',persona='einstein';
-function showBubble(){const b=document.getElementById('chat-bubble');if(!b)return;b.textContent='💡 '+QUOTES[Math.floor(Math.random()*QUOTES.length)];b.classList.add('visible');setTimeout(()=>b.classList.remove('visible'),6000)}
-setInterval(showBubble,25000);setTimeout(showBubble,3000);
-function toggleChat(){document.getElementById('chat-panel').classList.toggle('open');document.getElementById('chat-bubble').classList.remove('visible')}
-function changePersona(id){persona=id;const p=PERSONAS[persona];document.getElementById('sci-header-name').textContent=p.name;document.getElementById('sci-header-desc').textContent=p.desc;setHeaderAvatar(id);document.querySelectorAll('.sci-btn').forEach(b=>b.classList.remove('active'));if(event&&event.currentTarget)event.currentTarget.classList.add('active');if(apiKey)addBotMsg('¡Hola! Soy <b>'+p.name+'</b>. ¿En qué te ayudo?')}
-async function saveApiKey(){const keyInput=document.getElementById('api-key-input');const key=keyInput.value.trim();if(!key){alert('Ingresa tu API Key');return}if(!key.startsWith('AIza')){alert('Key inválida');return}const btn=document.querySelector('#api-key-section button');const orig=btn.innerHTML;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Verificando...';btn.disabled=true;try{const r=await fetch(GEMINI_URL+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'Di: OK'}]}]})});const d=await r.json();if(d.error){btn.innerHTML=orig;btn.disabled=false;alert('Error: '+d.error.message);return}apiKey=key;document.getElementById('api-key-section').style.display='none';document.getElementById('chat-input-area').style.display='flex';document.getElementById('chat-suggestions').style.display='flex';addBotMsg('✅ ¡Conectado con <b>Gemini 2.5 Flash</b>!<br>Soy <b>'+PERSONAS[persona].name+'</b>. Pregúntame sobre el efecto Doppler.')}catch(e){btn.innerHTML=orig;btn.disabled=false;alert('Error: '+e.message)}}
-function addBotMsg(h){const d=document.getElementById('chat-messages'),m=document.createElement('div');m.className='msg bot';const avatar='<div class="sci-avatar" style="width:28px;height:28px;display:inline-block;vertical-align:middle;margin-right:4px">'+SCI_SVG[persona]+'</div>';m.innerHTML='<span class="sci-name">'+avatar+' '+PERSONAS[persona].name+'</span>'+h;d.appendChild(m);d.scrollTop=d.scrollHeight}
-function addUserMsg(t){const d=document.getElementById('chat-messages'),m=document.createElement('div');m.className='msg user';m.textContent=t;d.appendChild(m);d.scrollTop=d.scrollHeight}
-function showTyping(){const d=document.getElementById('chat-messages'),t=document.createElement('div');t.className='typing-dots';t.id='typing';t.innerHTML='<div class="td"></div><div class="td"></div><div class="td"></div>';d.appendChild(t);d.scrollTop=d.scrollHeight}
-function hideTyping(){const t=document.getElementById('typing');if(t)t.remove()}
-function askSuggestion(btn){document.getElementById('chat-input').value=btn.textContent;sendChat()}
-async function sendChat(){const input=document.getElementById('chat-input'),text=input.value.trim();if(!text||!apiKey)return;addUserMsg(text);input.value='';showTyping();const p=PERSONAS[persona];try{const res=await fetch(GEMINI_URL+apiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p.system+'\n\nContexto: Cuaderno sobre el Efecto Doppler (fórmula general, cono de Mach, Doppler relativista, redshift, blueshift, Hubble).\n\nPregunta: '+text+'\n\nINSTRUCCIONES: Responde en español. Definiciones completas con fórmulas. Sin markdown. Preciso científicamente.'}]}],generationConfig:{maxOutputTokens:2048,temperature:0.7}})});hideTyping();const data=await res.json();if(data.candidates&&data.candidates[0]&&data.candidates[0].content)addBotMsg(data.candidates[0].content.parts[0].text);else if(data.error)addBotMsg('⚠ Error: '+data.error.message);else addBotMsg('⚠ Respuesta inesperada.')}catch(e){hideTyping();addBotMsg('⚠ Error: '+e.message)}}
+            </div>
+        </div>
+    </div>
 
-// ===== ZOOM =====
-let zoomScale=100;
-function zoomIn(){zoomScale=Math.min(150,zoomScale+10);applyZoom()}
-function zoomOut(){zoomScale=Math.max(60,zoomScale-10);applyZoom()}
-function applyZoom(){document.getElementById('book').style.transform='scale('+zoomScale/100+')';document.getElementById('book').style.transformOrigin='center center';document.getElementById('zoom-level').textContent=zoomScale+'%'}
+    <div id="modal-settings" class="fixed inset-0 z-[100] hidden modal-overlay bg-black/40 flex items-center justify-center p-4">
+        <div class="bg-[var(--bg-surface)] w-full max-w-sm rounded-3xl shadow-2xl modal-content border border-[var(--border-color)]">
+            <div class="p-6 border-b border-[var(--border-color)] flex justify-between items-center"><h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="settings-2" class="text-slate-500"></i> Ajustes</h2><button onclick="toggleModal('settings')" class="p-2 hover:bg-[var(--bg-canvas)] rounded-full"><i data-lucide="x"></i></button></div>
+            <div class="p-6 space-y-5">
+                <div class="flex items-center justify-between"><span class="font-medium text-[var(--text-main)]">Tema</span><button id="theme-toggle" class="w-14 h-8 bg-slate-200 dark:bg-slate-700 rounded-full relative transition-colors duration-300"><div class="w-6 h-6 bg-white rounded-full absolute top-1 left-1 transition-transform duration-300 dark:translate-x-6 shadow-md flex items-center justify-center"><i data-lucide="moon" class="w-3.5 h-3.5 text-slate-700 hidden dark:block"></i><i data-lucide="sun" class="w-3.5 h-3.5 text-yellow-500 dark:hidden"></i></div></button></div>
+            </div>
+        </div>
+    </div>
 
-// ===== NARRATOR =====
-let narrating=false;
-function toggleNarrator(){if(narrating){stopNarrator();return}const spread=spreads[current];if(!spread)return;let text='';spread.querySelectorAll('.page').forEach(p=>{const clone=p.cloneNode(true);clone.querySelectorAll('canvas,button,input,select,iframe,.page-num,.quiz-opt,.quiz-feedback,details,style,script').forEach(el=>el.remove());text+=clone.textContent.replace(/\s+/g,' ').trim()+'. '});if(!text.trim())return;narrating=true;document.getElementById('narrator-btn').classList.add('speaking');document.getElementById('narrator-btn').innerHTML='<i class="fas fa-stop"></i>';document.getElementById('narrator-status').textContent='🔊 Narrando...';document.getElementById('narrator-status').classList.add('visible');const u=new SpeechSynthesisUtterance(text);u.lang='es-ES';u.rate=0.85;u.pitch=1.15;const voices=speechSynthesis.getVoices();const v=voices.find(v=>v.lang.startsWith('es')&&/female|helena|lucia|paulina|conchita/i.test(v.name))||voices.find(v=>v.lang.startsWith('es'));if(v)u.voice=v;u.onend=()=>stopNarrator();u.onerror=()=>stopNarrator();speechSynthesis.cancel();speechSynthesis.speak(u)}
-function stopNarrator(){narrating=false;speechSynthesis.cancel();document.getElementById('narrator-btn').classList.remove('speaking');document.getElementById('narrator-btn').innerHTML='<i class="fas fa-volume-up"></i>';document.getElementById('narrator-status').classList.remove('visible')}
-if(speechSynthesis.onvoiceschanged!==undefined)speechSynthesis.onvoiceschanged=()=>{};
-</script>
+    <!-- MODAL OSCILOSCOPIO -->
+    <div id="modal-oscillo" class="fixed inset-0 z-[100] hidden modal-overlay bg-black/40 flex items-center justify-center p-4">
+        <div class="bg-[var(--bg-surface)] w-full max-w-3xl rounded-3xl shadow-2xl modal-content border border-[var(--border-color)]">
+            <div class="p-5 border-b border-[var(--border-color)] flex justify-between items-center">
+                <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="activity" class="text-emerald-500"></i> Osciloscopio — f(t)</h2>
+                <button onclick="toggleModal('oscillo')" class="p-2 hover:bg-[var(--bg-canvas)] rounded-full"><i data-lucide="x"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="oscillo-container"><canvas id="oscillo-canvas"></canvas></div>
+                <div class="flex justify-between mt-3 text-[10px] font-mono text-[var(--text-muted)] uppercase">
+                    <span>● <span style="color:#34d399">f percibida</span></span>
+                    <span>● <span style="color:#818cf8">f fuente</span></span>
+                    <span>Ventana: 10s</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIG & STATE ---
+        const CONFIG = { 
+            waveColor: '#3b82f6', 
+            gridMajor: '#94a3b8', gridMinor: '#e2e8f0', axisColor: '#334155', 
+            audioEnabled: false, // START MUTED
+            waveStyle: [],
+            waveWidth: 2
+        };
+        // Set volume to 0.9 default
+        const STATE = { t: 0, running: true, source: { x: 0, y: 0, vx: 0, vy: 0, type: 'point' }, observer: { x: 150, y: 0, vx: 0, vy: 0, hit: 0 }, params: { freq: 2.0, c: 340, vs: 0 }, waves: [], lastEmitTime: 0, scale: 1.0, pan: { x: 0, y: 0 }, isDraggingView: false, lastMouse: { x: 0, y: 0 }, dt: 0.016, lastFrameTime: 0, volume: 0.9, particles: [], oscilloData: [], lastObsFreq: 0 };
+        const canvas = document.getElementById('sim-canvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        let audioCtx, gainNode;
+
+        // --- DOPPLER COLOR: blue approaching, red receding ---
+        function getDopplerColor(waveX, waveY, baseColor) {
+            const dx = waveX - STATE.observer.x;
+            const dy = waveY - STATE.observer.y;
+            const dist = Math.hypot(dx, dy) || 1;
+            const vProj = STATE.params.vs * (dx / dist);
+            const ratio = vProj / STATE.params.c;
+            // ratio > 0 = approaching observer → blueshift; < 0 = receding → redshift
+            if (ratio > 0.05) {
+                const t = Math.min(1, ratio);
+                const r = Math.round(59 * (1 - t));
+                const g = Math.round(130 * (1 - t * 0.5));
+                const b = Math.round(246 + (255 - 246) * t);
+                return `rgb(${r},${g},${b})`;
+            } else if (ratio < -0.05) {
+                const t = Math.min(1, -ratio);
+                const r = Math.round(244 * t + 59 * (1 - t));
+                const g = Math.round(63 * t + 130 * (1 - t));
+                const b = Math.round(94 * t + 246 * (1 - t));
+                return `rgb(${r},${g},${b})`;
+            }
+            return baseColor;
+        }
+
+        // --- PARTICLE TRAIL ---
+        function emitParticles() {
+            if (Math.abs(STATE.params.vs) < 5) return;
+            for (let i = 0; i < 2; i++) {
+                STATE.particles.push({
+                    x: STATE.source.x - Math.sign(STATE.params.vs) * 15,
+                    y: STATE.source.y + (Math.random() - 0.5) * 10,
+                    vx: -STATE.params.vs * 0.1 + (Math.random() - 0.5) * 20,
+                    vy: (Math.random() - 0.5) * 15,
+                    life: 1.0,
+                    size: 2 + Math.random() * 3
+                });
+            }
+        }
+        function updateParticles(dt) {
+            STATE.particles = STATE.particles.filter(p => {
+                p.x += p.vx * dt; p.y += p.vy * dt;
+                p.life -= dt * 1.2;
+                return p.life > 0;
+            });
+            if (STATE.particles.length > 200) STATE.particles.splice(0, 50);
+        }
+        function drawParticles(ctx) {
+            STATE.particles.forEach(p => {
+                const alpha = p.life * 0.6;
+                const speed = Math.abs(STATE.params.vs);
+                const mach = speed / STATE.params.c;
+                let color;
+                if (mach > 1) color = `rgba(244,63,94,${alpha})`;
+                else if (mach > 0.8) color = `rgba(251,191,36,${alpha})`;
+                else color = `rgba(148,163,184,${alpha})`;
+                ctx.fillStyle = color;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2); ctx.fill();
+            });
+        }
+
+        // --- MACH CONE ---
+        function drawMachCone(ctx, x, y) {
+            const mach = Math.abs(STATE.params.vs) / STATE.params.c;
+            if (mach <= 1.0) return;
+            const halfAngle = Math.asin(1 / mach);
+            const coneLen = 3000;
+            const dir = STATE.params.vs > 0 ? Math.PI : 0;
+            ctx.save();
+            ctx.globalAlpha = 0.15;
+            ctx.fillStyle = '#f43f5e';
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + Math.cos(dir + halfAngle) * coneLen, y + Math.sin(dir + halfAngle) * coneLen);
+            ctx.lineTo(x + Math.cos(dir - halfAngle) * coneLen, y + Math.sin(dir - halfAngle) * coneLen);
+            ctx.closePath(); ctx.fill();
+            // Cone edge lines
+            ctx.globalAlpha = 0.5;
+            ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 2 / STATE.scale;
+            ctx.setLineDash([8 / STATE.scale, 6 / STATE.scale]);
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + Math.cos(dir + halfAngle) * coneLen, y + Math.sin(dir + halfAngle) * coneLen);
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + Math.cos(dir - halfAngle) * coneLen, y + Math.sin(dir - halfAngle) * coneLen);
+            ctx.stroke(); ctx.setLineDash([]);
+            // Angle label
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = '#f43f5e'; ctx.font = `bold ${14/STATE.scale}px Inter`;
+            ctx.textAlign = 'center';
+            ctx.fillText(`θ = ${(halfAngle * 180 / Math.PI).toFixed(1)}°`, x + Math.cos(dir) * 80, y - 30 / STATE.scale);
+            ctx.restore();
+        }
+
+        // --- OSCILLOSCOPE ---
+        const OSCILLO_WINDOW = 10; // seconds
+        function drawOscilloscope() {
+            const oCanvas = document.getElementById('oscillo-canvas');
+            if (!oCanvas || oCanvas.offsetParent === null) return;
+            const container = oCanvas.parentElement;
+            oCanvas.width = container.clientWidth; oCanvas.height = container.clientHeight;
+            const octx = oCanvas.getContext('2d');
+            const w = oCanvas.width, h = oCanvas.height;
+            octx.fillStyle = '#020617'; octx.fillRect(0, 0, w, h);
+            // Grid
+            octx.strokeStyle = 'rgba(52,211,153,0.1)'; octx.lineWidth = 1;
+            for (let i = 1; i < 10; i++) { const x = w * i / 10; octx.beginPath(); octx.moveTo(x, 0); octx.lineTo(x, h); octx.stroke(); }
+            for (let i = 1; i < 6; i++) { const y = h * i / 6; octx.beginPath(); octx.moveTo(0, y); octx.lineTo(w, y); octx.stroke(); }
+            if (STATE.oscilloData.length < 2) return;
+            const data = STATE.oscilloData;
+            const tEnd = data[data.length - 1].t;
+            const tStart = tEnd - OSCILLO_WINDOW;
+            const maxF = Math.max(STATE.params.freq * 4, 10);
+            // f_source baseline
+            octx.strokeStyle = '#818cf8'; octx.lineWidth = 1; octx.setLineDash([5, 5]);
+            const baseY = h - (STATE.params.freq / maxF) * h * 0.9 - h * 0.05;
+            octx.beginPath(); octx.moveTo(0, baseY); octx.lineTo(w, baseY); octx.stroke(); octx.setLineDash([]);
+            // f_perceived line
+            octx.strokeStyle = '#34d399'; octx.lineWidth = 2.5; octx.shadowColor = '#34d399'; octx.shadowBlur = 8;
+            octx.beginPath();
+            let started = false;
+            data.forEach(d => {
+                if (d.t < tStart) return;
+                const px = ((d.t - tStart) / OSCILLO_WINDOW) * w;
+                const py = h - (Math.min(d.f, maxF) / maxF) * h * 0.9 - h * 0.05;
+                if (!started) { octx.moveTo(px, py); started = true; } else { octx.lineTo(px, py); }
+            });
+            octx.stroke(); octx.shadowBlur = 0;
+        }
+
+        // --- UPDATE MACH HUD ---
+        function updateMachHUD() {
+            const mach = Math.abs(STATE.params.vs) / STATE.params.c;
+            const mVal = document.getElementById('mach-value');
+            const mReg = document.getElementById('mach-regime');
+            mVal.textContent = mach.toFixed(2);
+            mVal.className = 'mach-value ' + (mach >= 1 ? 'supersonic' : mach >= 0.8 ? 'transonic' : 'subsonic');
+            if (mach >= 1) { mReg.textContent = 'Supersónico'; mReg.className = 'regime-tag super'; }
+            else if (mach >= 0.8) { mReg.textContent = 'Transónico'; mReg.className = 'regime-tag trans'; }
+            else { mReg.textContent = 'Subsónico'; mReg.className = 'regime-tag sub'; }
+        }
+
+        // --- CONFIG HANDLERS ---
+        window.updateWaveConfig = (type, val) => {
+            if(type === 'color') CONFIG.waveColor = val;
+            if(type === 'style') {
+                CONFIG.waveStyle = val;
+                document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+                const id = val.length === 0 ? 'solid' : (val[0]===10 ? 'dashed' : 'dotted');
+                document.getElementById('btn-style-'+id).classList.add('active');
+            }
+            if(type === 'width') {
+                CONFIG.waveWidth = parseFloat(val);
+                document.getElementById('width-val').innerText = val + 'px';
+            }
+        };
+
+        let reverbNode = null;
+        function initAudio() {
+            if (!audioCtx) { 
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+                gainNode = audioCtx.createGain(); 
+                gainNode.gain.value = 0.8;
+                // Create convolver reverb for spacious sound
+                reverbNode = audioCtx.createConvolver();
+                const rate = audioCtx.sampleRate;
+                const len = rate * 1.5;
+                const impulse = audioCtx.createBuffer(2, len, rate);
+                for (let ch = 0; ch < 2; ch++) {
+                    const data = impulse.getChannelData(ch);
+                    for (let i = 0; i < len; i++) {
+                        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.5);
+                    }
+                }
+                reverbNode.buffer = impulse;
+                const reverbGain = audioCtx.createGain();
+                reverbGain.gain.value = 0.2;
+                reverbNode.connect(reverbGain);
+                reverbGain.connect(audioCtx.destination);
+                gainNode.connect(audioCtx.destination);
+                gainNode.connect(reverbNode);
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        
+        window.toggleAudio = () => {
+            initAudio();
+            CONFIG.audioEnabled = !CONFIG.audioEnabled;
+            const btn = document.getElementById('btn-audio-toggle');
+            const icon = document.getElementById('icon-audio-toggle');
+            if (CONFIG.audioEnabled) {
+                btn.classList.remove('bg-slate-100', 'text-[var(--text-muted)]', 'dark:bg-slate-800');
+                btn.classList.add('bg-emerald-100', 'text-emerald-600', 'border-emerald-300', 'dark:bg-emerald-900/50', 'dark:text-emerald-400', 'dark:border-emerald-800');
+                icon.setAttribute('data-lucide', 'volume-2');
+            } else {
+                btn.classList.add('bg-slate-100', 'text-[var(--text-muted)]', 'dark:bg-slate-800');
+                btn.classList.remove('bg-emerald-100', 'text-emerald-600', 'border-emerald-300', 'dark:bg-emerald-900/50', 'dark:text-emerald-400', 'dark:border-emerald-800');
+                icon.setAttribute('data-lucide', 'volume-x');
+            }
+            lucide.createIcons();
+            // Auto-start/stop engine sound based on source type
+            if (CONFIG.audioEnabled && (STATE.source.type === 'car' || STATE.source.type === 'jet')) {
+                startEngine(STATE.source.type);
+            } else { stopEngine(); }
+        };
+
+        function playPulse(frequency, intensity) {
+            if (!CONFIG.audioEnabled || !audioCtx) return;
+            const now = audioCtx.currentTime;
+            const freq = Math.max(80, Math.min(4000, frequency));
+            const peak = Math.min(0.9, intensity * STATE.volume);
+            const dur = 0.35;
+
+            // Layer 1: Main sine tone (clean fundamental)
+            const osc1 = audioCtx.createOscillator();
+            osc1.type = 'sine';
+            osc1.frequency.value = freq;
+            const g1 = audioCtx.createGain();
+            g1.gain.setValueAtTime(0, now);
+            g1.gain.linearRampToValueAtTime(peak * 0.6, now + 0.005);
+            g1.gain.exponentialRampToValueAtTime(0.001, now + dur);
+            osc1.connect(g1); g1.connect(gainNode);
+            osc1.start(now); osc1.stop(now + dur + 0.05);
+
+            // Layer 2: Triangle at octave below for warmth
+            const osc2 = audioCtx.createOscillator();
+            osc2.type = 'triangle';
+            osc2.frequency.value = freq * 0.5;
+            const g2 = audioCtx.createGain();
+            g2.gain.setValueAtTime(0, now);
+            g2.gain.linearRampToValueAtTime(peak * 0.3, now + 0.008);
+            g2.gain.exponentialRampToValueAtTime(0.001, now + dur * 0.8);
+            osc2.connect(g2); g2.connect(gainNode);
+            osc2.start(now); osc2.stop(now + dur);
+
+            // Layer 3: Subtle noise burst for impact
+            const bufLen = audioCtx.sampleRate * 0.04;
+            const noiseBuf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+            const noiseData = noiseBuf.getChannelData(0);
+            for (let i = 0; i < bufLen; i++) noiseData[i] = (Math.random() * 2 - 1) * (1 - i / bufLen);
+            const noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = noiseBuf;
+            const nf = audioCtx.createBiquadFilter();
+            nf.type = 'bandpass'; nf.frequency.value = freq; nf.Q.value = 2;
+            const gn = audioCtx.createGain();
+            gn.gain.setValueAtTime(peak * 0.15, now);
+            gn.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+            noiseNode.connect(nf); nf.connect(gn); gn.connect(gainNode);
+            noiseNode.start(now); noiseNode.stop(now + 0.08);
+        }
+
+
+        // === ENGINE SOUND SYSTEM ===
+        const ENGINE = { nodes: null, type: null };
+
+        function stopEngine() {
+            if (!ENGINE.nodes) return;
+            const now = audioCtx ? audioCtx.currentTime : 0;
+            try {
+                ENGINE.nodes.masterGain.gain.linearRampToValueAtTime(0, now + 0.3);
+                setTimeout(() => {
+                    if (ENGINE.nodes) {
+                        ENGINE.nodes.oscillators.forEach(o => { try { o.stop(); } catch(e){} });
+                        ENGINE.nodes = null;
+                    }
+                }, 400);
+            } catch(e) { ENGINE.nodes = null; }
+            ENGINE.type = null;
+        }
+
+        function startEngine(type) {
+            if (!CONFIG.audioEnabled || !audioCtx) return;
+            if (ENGINE.type === type) return;
+            stopEngine();
+            ENGINE.type = type;
+            const now = audioCtx.currentTime;
+            const masterGain = audioCtx.createGain();
+            masterGain.gain.setValueAtTime(0, now);
+            masterGain.gain.linearRampToValueAtTime(0.12 * STATE.volume, now + 0.5);
+            masterGain.connect(gainNode);
+            const oscillators = [];
+
+            if (type === 'car') {
+                // Car: low rumble (sawtooth ~60Hz) + sub-bass (sine ~30Hz) + LFO tremolo
+                const lfo = audioCtx.createOscillator();
+                lfo.type = 'sine'; lfo.frequency.value = 6;
+                const lfoGain = audioCtx.createGain();
+                lfoGain.gain.value = 0.3;
+                lfo.connect(lfoGain); lfo.start(now);
+                oscillators.push(lfo);
+
+                const osc1 = audioCtx.createOscillator();
+                osc1.type = 'sawtooth'; osc1.frequency.value = 55;
+                const g1 = audioCtx.createGain(); g1.gain.value = 0.4;
+                lfoGain.connect(g1.gain);
+                const lp1 = audioCtx.createBiquadFilter();
+                lp1.type = 'lowpass'; lp1.frequency.value = 200; lp1.Q.value = 3;
+                osc1.connect(lp1); lp1.connect(g1); g1.connect(masterGain);
+                osc1.start(now); oscillators.push(osc1);
+
+                const osc2 = audioCtx.createOscillator();
+                osc2.type = 'sine'; osc2.frequency.value = 28;
+                const g2 = audioCtx.createGain(); g2.gain.value = 0.35;
+                osc2.connect(g2); g2.connect(masterGain);
+                osc2.start(now); oscillators.push(osc2);
+
+                // Noise for exhaust rumble
+                const noiseBuf = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+                const nd = noiseBuf.getChannelData(0);
+                for (let i = 0; i < nd.length; i++) nd[i] = (Math.random() * 2 - 1);
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = noiseBuf; noise.loop = true;
+                const nFilter = audioCtx.createBiquadFilter();
+                nFilter.type = 'bandpass'; nFilter.frequency.value = 80; nFilter.Q.value = 1;
+                const ng = audioCtx.createGain(); ng.gain.value = 0.15;
+                noise.connect(nFilter); nFilter.connect(ng); ng.connect(masterGain);
+                noise.start(now); oscillators.push(noise);
+
+                ENGINE.nodes = { masterGain, oscillators, osc1, osc2, lfo, lp1, nFilter, ng };
+
+            } else if (type === 'jet') {
+                // Jet: high turbine whine + harmonics + noise rush
+                const freqs = [420, 840, 1260];
+                const gains = [0.25, 0.12, 0.06];
+                const oscNodes = [];
+                freqs.forEach((f, i) => {
+                    const osc = audioCtx.createOscillator();
+                    osc.type = i === 0 ? 'sawtooth' : 'sine';
+                    osc.frequency.value = f;
+                    const g = audioCtx.createGain(); g.gain.value = gains[i];
+                    const bp = audioCtx.createBiquadFilter();
+                    bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = 2;
+                    osc.connect(bp); bp.connect(g); g.connect(masterGain);
+                    osc.start(now); oscillators.push(osc);
+                    oscNodes.push({ osc, gain: g, filter: bp });
+                });
+
+                // Jet wind noise
+                const noiseBuf = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+                const nd = noiseBuf.getChannelData(0);
+                for (let i = 0; i < nd.length; i++) nd[i] = (Math.random() * 2 - 1);
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = noiseBuf; noise.loop = true;
+                const hp = audioCtx.createBiquadFilter();
+                hp.type = 'highpass'; hp.frequency.value = 2000; hp.Q.value = 0.5;
+                const ng = audioCtx.createGain(); ng.gain.value = 0.08;
+                noise.connect(hp); hp.connect(ng); ng.connect(masterGain);
+                noise.start(now); oscillators.push(noise);
+
+                ENGINE.nodes = { masterGain, oscillators, oscNodes, hp, ng };
+            }
+        }
+
+        function updateEngineSound() {
+            if (!ENGINE.nodes || !audioCtx) return;
+            const speed = Math.abs(STATE.params.vs);
+            const vol = Math.min(0.25, 0.05 + speed * 0.0006) * STATE.volume;
+            const now = audioCtx.currentTime;
+            ENGINE.nodes.masterGain.gain.setTargetAtTime(vol, now, 0.1);
+
+            if (ENGINE.type === 'car' && ENGINE.nodes.osc1) {
+                const rpm = 55 + speed * 0.35;
+                ENGINE.nodes.osc1.frequency.setTargetAtTime(rpm, now, 0.15);
+                ENGINE.nodes.osc2.frequency.setTargetAtTime(rpm * 0.5, now, 0.15);
+                ENGINE.nodes.lfo.frequency.setTargetAtTime(4 + speed * 0.02, now, 0.1);
+                ENGINE.nodes.lp1.frequency.setTargetAtTime(150 + speed * 0.8, now, 0.1);
+                ENGINE.nodes.nFilter.frequency.setTargetAtTime(60 + speed * 0.3, now, 0.1);
+                ENGINE.nodes.ng.gain.setTargetAtTime(0.1 + speed * 0.001, now, 0.1);
+            } else if (ENGINE.type === 'jet' && ENGINE.nodes.oscNodes) {
+                const factor = 1 + speed * 0.002;
+                ENGINE.nodes.oscNodes.forEach((n, i) => {
+                    const baseF = [420, 840, 1260][i];
+                    n.osc.frequency.setTargetAtTime(baseF * factor, now, 0.15);
+                    n.filter.frequency.setTargetAtTime(baseF * factor, now, 0.15);
+                });
+                ENGINE.nodes.hp.frequency.setTargetAtTime(1500 + speed * 3, now, 0.1);
+                ENGINE.nodes.ng.gain.setTargetAtTime(0.05 + speed * 0.0005, now, 0.1);
+            }
+        }
+
+        // --- DRAWING FUNCTIONS ---
+        // --- COCHE PATRULLA PREMIUM ---
+        function drawCar(ctx, x, y, angle) {
+            ctx.save(); ctx.translate(x, y); ctx.rotate(angle); ctx.scale(1.0, 1.0);
+            const blink = Math.sin(Date.now() / 120) > 0;
+            // Drop shadow
+            ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 8;
+            // Chasis principal (cuerpo)
+            const bodyGrad = ctx.createLinearGradient(-50, -22, -50, 22);
+            bodyGrad.addColorStop(0, '#1e3a5f'); bodyGrad.addColorStop(0.5, '#0f2744'); bodyGrad.addColorStop(1, '#0a1929');
+            ctx.fillStyle = bodyGrad;
+            ctx.beginPath(); ctx.roundRect(-50, -22, 100, 44, 10); ctx.fill();
+            ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+            // Franja blanca policial
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            ctx.fillRect(-48, -5, 96, 10);
+            // Ventanas (cristal oscuro)
+            const winGrad = ctx.createLinearGradient(0, -18, 0, -8);
+            winGrad.addColorStop(0, '#4fc3f7'); winGrad.addColorStop(1, '#0288d1');
+            ctx.fillStyle = winGrad; ctx.globalAlpha = 0.7;
+            ctx.beginPath(); ctx.roundRect(-28, -19, 56, 14, 3); ctx.fill();
+            ctx.globalAlpha = 1;
+            // Reflejo ventana
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.fillRect(-26, -18, 20, 3);
+            // Ruedas
+            ctx.fillStyle = '#111'; ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = 4;
+            ctx.beginPath(); ctx.ellipse(-30, -24, 9, 7, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(30, -24, 9, 7, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(-30, 24, 9, 7, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(30, 24, 9, 7, 0, 0, Math.PI * 2); ctx.fill();
+            // Rines
+            ctx.fillStyle = '#555'; ctx.shadowBlur = 0;
+            ctx.beginPath(); ctx.ellipse(-30, -24, 4, 3, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(30, -24, 4, 3, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(-30, 24, 4, 3, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(30, 24, 4, 3, 0, 0, Math.PI * 2); ctx.fill();
+            // Faros delanteros (LED amarillos)
+            ctx.fillStyle = '#fef08a'; ctx.shadowColor = '#fef08a'; ctx.shadowBlur = 12;
+            ctx.beginPath(); ctx.roundRect(46, -14, 5, 8, 2); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(46, 6, 5, 8, 2); ctx.fill();
+            // Luces traseras rojas
+            ctx.fillStyle = '#ef4444'; ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 10;
+            ctx.beginPath(); ctx.roundRect(-52, -14, 4, 8, 2); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(-52, 6, 4, 8, 2); ctx.fill();
+            ctx.shadowBlur = 0;
+            // Barra de sirenas (techo)
+            ctx.fillStyle = '#334155';
+            ctx.beginPath(); ctx.roundRect(-15, -8, 30, 16, 4); ctx.fill();
+            // Sirena ROJA
+            ctx.fillStyle = blink ? '#ff1744' : '#5c0011';
+            ctx.shadowColor = '#ff1744'; ctx.shadowBlur = blink ? 25 : 0;
+            ctx.beginPath(); ctx.arc(-7, 0, 5, 0, Math.PI * 2); ctx.fill();
+            // Sirena AZUL
+            ctx.fillStyle = !blink ? '#2979ff' : '#001064';
+            ctx.shadowColor = '#2979ff'; ctx.shadowBlur = !blink ? 25 : 0;
+            ctx.beginPath(); ctx.arc(7, 0, 5, 0, Math.PI * 2); ctx.fill();
+            // Halo sirena activa
+            if (blink) {
+                ctx.globalAlpha = 0.15; ctx.fillStyle = '#ff1744';
+                ctx.beginPath(); ctx.arc(-7, 0, 18, 0, Math.PI * 2); ctx.fill();
+            } else {
+                ctx.globalAlpha = 0.15; ctx.fillStyle = '#2979ff';
+                ctx.beginPath(); ctx.arc(7, 0, 18, 0, Math.PI * 2); ctx.fill();
+            }
+            ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+            ctx.restore();
+        }
+
+        // --- JET FIGHTER F-22 STYLE ---
+        function drawJet(ctx, x, y, angle) {
+            ctx.save(); ctx.translate(x, y); ctx.rotate(angle); ctx.scale(1.0, 1.0);
+            const mach = Math.abs(STATE.params.vs) / STATE.params.c;
+            // Drop shadow
+            ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowBlur = 25; ctx.shadowOffsetY = 15;
+            // Fuselaje principal
+            const fuseGrad = ctx.createLinearGradient(0, -15, 0, 15);
+            fuseGrad.addColorStop(0, '#64748b'); fuseGrad.addColorStop(0.4, '#94a3b8'); fuseGrad.addColorStop(1, '#475569');
+            ctx.fillStyle = fuseGrad;
+            ctx.beginPath();
+            ctx.moveTo(55, 0);  // nariz
+            ctx.quadraticCurveTo(40, -8, 20, -10);
+            ctx.lineTo(-35, -12);
+            ctx.lineTo(-45, -8);
+            ctx.lineTo(-45, 8);
+            ctx.lineTo(-35, 12);
+            ctx.lineTo(20, 10);
+            ctx.quadraticCurveTo(40, 8, 55, 0);
+            ctx.fill();
+            ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+            // Alas delta
+            const wingGrad = ctx.createLinearGradient(0, -55, 0, 55);
+            wingGrad.addColorStop(0, '#475569'); wingGrad.addColorStop(0.5, '#6b7a8d'); wingGrad.addColorStop(1, '#475569');
+            ctx.fillStyle = wingGrad;
+            ctx.beginPath();
+            ctx.moveTo(10, -10); ctx.lineTo(-20, -55); ctx.lineTo(-35, -50); ctx.lineTo(-15, -12);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(10, 10); ctx.lineTo(-20, 55); ctx.lineTo(-35, 50); ctx.lineTo(-15, 12);
+            ctx.fill();
+            // Estabilizadores traseros
+            ctx.fillStyle = '#334155';
+            ctx.beginPath(); ctx.moveTo(-35, -8); ctx.lineTo(-50, -28); ctx.lineTo(-48, -25); ctx.lineTo(-40, -8); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(-35, 8); ctx.lineTo(-50, 28); ctx.lineTo(-48, 25); ctx.lineTo(-40, 8); ctx.fill();
+            // Cabina (cockpit)
+            const cockGrad = ctx.createRadialGradient(30, 0, 2, 30, 0, 12);
+            cockGrad.addColorStop(0, '#e0f7fa'); cockGrad.addColorStop(0.6, '#4fc3f7'); cockGrad.addColorStop(1, '#0277bd');
+            ctx.fillStyle = cockGrad;
+            ctx.beginPath(); ctx.ellipse(30, 0, 12, 6, 0, 0, Math.PI * 2); ctx.fill();
+            // Reflejo cockpit
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.beginPath(); ctx.ellipse(33, -2, 5, 2.5, -0.3, 0, Math.PI * 2); ctx.fill();
+            // Líneas de detalle fuselaje
+            ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.lineWidth = 0.8;
+            ctx.beginPath(); ctx.moveTo(45, 0); ctx.lineTo(-40, 0); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(20, -10); ctx.lineTo(20, 10); ctx.stroke();
+            // Toberas de escape
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath(); ctx.ellipse(-45, -4, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(-45, 4, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
+            // Postquemador (afterburner)
+            if (STATE.params.vs > 10) {
+                const intensity = Math.min(1, mach);
+                const flicker = 0.7 + Math.random() * 0.3;
+                const flameLen = 30 + intensity * 60 + Math.random() * 15;
+                // Llama exterior (naranja)
+                const flameGrad = ctx.createLinearGradient(-45, 0, -45 - flameLen, 0);
+                flameGrad.addColorStop(0, `rgba(255,200,50,${0.9 * flicker})`);
+                flameGrad.addColorStop(0.4, `rgba(255,120,0,${0.7 * flicker})`);
+                flameGrad.addColorStop(1, 'rgba(255,60,0,0)');
+                ctx.fillStyle = flameGrad;
+                ctx.shadowColor = '#ff6600'; ctx.shadowBlur = 20 + intensity * 30;
+                ctx.beginPath();
+                ctx.moveTo(-45, -7); ctx.quadraticCurveTo(-60 - flameLen * 0.5, 0, -45 - flameLen, 0);
+                ctx.quadraticCurveTo(-60 - flameLen * 0.5, 0, -45, 7);
+                ctx.fill();
+                // Llama interior (azul-blanco = más caliente)
+                if (mach > 0.5) {
+                    const innerLen = flameLen * 0.4;
+                    const innerGrad = ctx.createLinearGradient(-45, 0, -45 - innerLen, 0);
+                    innerGrad.addColorStop(0, `rgba(200,230,255,${0.8 * flicker})`);
+                    innerGrad.addColorStop(1, 'rgba(100,180,255,0)');
+                    ctx.fillStyle = innerGrad; ctx.shadowColor = '#88ccff'; ctx.shadowBlur = 15;
+                    ctx.beginPath();
+                    ctx.moveTo(-45, -3); ctx.quadraticCurveTo(-50 - innerLen * 0.5, 0, -45 - innerLen, 0);
+                    ctx.quadraticCurveTo(-50 - innerLen * 0.5, 0, -45, 3);
+                    ctx.fill();
+                }
+                // Shock diamonds a mach alto
+                if (mach > 1.2) {
+                    ctx.globalAlpha = 0.4 * flicker;
+                    ctx.fillStyle = '#fff';
+                    for (let i = 1; i <= 3; i++) {
+                        const dx = -45 - i * 15;
+                        const sz = 3 - i * 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(dx, -sz); ctx.lineTo(dx - 4, 0); ctx.lineTo(dx, sz); ctx.lineTo(dx + 4, 0);
+                        ctx.fill();
+                    }
+                    ctx.globalAlpha = 1;
+                }
+                ctx.shadowBlur = 0;
+            }
+            ctx.restore();
+        }
+
+        // --- MICROFONO REDISEÑADO (PLATEADO/PREMIUM + REACTIVO) ---
+        function drawMic(ctx, x, y) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(0.2, 0.2); // <-- REDUCCIÓN TAMAÑO AL 20%
+
+            // Sombra Base
+            ctx.fillStyle = 'rgba(0,0,0,0.2)';
+            ctx.beginPath(); ctx.ellipse(0, 65, 40, 12, 0, 0, Math.PI*2); ctx.fill();
+
+            // Base de Mesa (Metal Cepillado Oscuro)
+            const gradBase = ctx.createLinearGradient(-40, 60, 40, 60);
+            gradBase.addColorStop(0, '#334155'); gradBase.addColorStop(0.5, '#64748b'); gradBase.addColorStop(1, '#334155');
+            ctx.fillStyle = gradBase;
+            ctx.beginPath(); ctx.ellipse(0, 60, 40, 10, 0, 0, Math.PI*2); ctx.fill();
+            
+            // Brazo Vertical (Cromo)
+            const gradPole = ctx.createLinearGradient(-5, 0, 5, 0);
+            gradPole.addColorStop(0, '#94a3b8'); gradPole.addColorStop(0.5, '#f1f5f9'); gradPole.addColorStop(1, '#94a3b8');
+            ctx.fillStyle = gradPole;
+            ctx.fillRect(-5, 15, 10, 45);
+
+            // Araña (Suspensión Plástica High-Tech)
+            ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 5;
+            ctx.beginPath(); ctx.arc(0, -10, 28, 0, Math.PI, false); ctx.stroke(); 
+            ctx.beginPath(); ctx.arc(0, -35, 28, 0, Math.PI*2); ctx.stroke(); 
+
+            // Bandas Elásticas (Naranja Neón)
+            ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2; 
+            ctx.beginPath(); ctx.moveTo(-22, -15); ctx.lineTo(-24, -35); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(22, -15); ctx.lineTo(24, -35); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(-12, -10); ctx.lineTo(-14, -40); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(12, -10); ctx.lineTo(14, -40); ctx.stroke();
+
+            // Cuerpo Micrófono (Plateado Mate)
+            const gradBody = ctx.createLinearGradient(-15, 0, 15, 0);
+            gradBody.addColorStop(0, '#cbd5e1'); gradBody.addColorStop(0.5, '#ffffff'); gradBody.addColorStop(1, '#cbd5e1');
+            ctx.fillStyle = gradBody; ctx.beginPath(); ctx.roundRect(-15, -45, 30, 55, 8); ctx.fill();
+
+            // Placa frontal (Detalle)
+            ctx.fillStyle = '#0f172a'; ctx.fillRect(-8, -35, 16, 25);
+
+            // Cabeza (Rejilla Dorada Brillante - REACTIVA)
+            const gradMesh = ctx.createRadialGradient(-8, -65, 2, 0, -65, 22);
+            
+            if (STATE.observer.hit > 0) {
+                // EFECTO DESTELLO INTENSO (Blanco/Amarillo Brillante)
+                gradMesh.addColorStop(0, '#ffffff'); 
+                gradMesh.addColorStop(0.6, '#fef08a'); // Amarillo muy claro
+                gradMesh.addColorStop(1, '#eab308');
+                
+                // Glow externo extra al golpear
+                ctx.shadowColor = '#fef08a'; 
+                ctx.shadowBlur = 30;
+            } else {
+                // Estado Normal (Dorado)
+                gradMesh.addColorStop(0, '#fde047'); 
+                gradMesh.addColorStop(0.6, '#eab308'); 
+                gradMesh.addColorStop(1, '#a16207');
+                ctx.shadowBlur = 0;
+            }
+            
+            ctx.fillStyle = gradMesh; ctx.beginPath(); ctx.arc(0, -65, 18, 0, Math.PI*2); ctx.fill();
+            ctx.shadowBlur = 0; // Reset shadow
+
+            // Textura Malla
+            ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.lineWidth = 0.5;
+            for(let i=-82; i<-48; i+=3) { ctx.beginPath(); ctx.moveTo(-15, i); ctx.lineTo(15, i); ctx.stroke(); }
+            for(let i=-15; i<=15; i+=3) { ctx.beginPath(); ctx.moveTo(i, -82); ctx.lineTo(i, -48); ctx.stroke(); }
+
+            // LED Estado (Cian)
+            if (STATE.observer.hit > 0) {
+                 ctx.fillStyle = '#06b6d4'; ctx.shadowColor='#06b6d4'; ctx.shadowBlur=15;
+                 ctx.beginPath(); ctx.arc(0, -22, 4, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+                 
+                 // Onda Expansiva Visual (Anillo Cian)
+                 ctx.strokeStyle = `rgba(6, 182, 212, ${STATE.observer.hit/8})`; 
+                 ctx.lineWidth = 3;
+                 ctx.beginPath(); ctx.arc(0, -65, 25 + (8-STATE.observer.hit)*4, 0, Math.PI*2); ctx.stroke();
+                 STATE.observer.hit--;
+            } else {
+                ctx.fillStyle = '#334155'; ctx.beginPath(); ctx.arc(0, -22, 3, 0, Math.PI*2); ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // --- GRID & COORD ---
+        function worldToScreen(x, y) { return { x: x * STATE.scale + STATE.pan.x, y: y * STATE.scale + STATE.pan.y }; }
+        function screenToWorld(sx, sy) { return { x: (sx - STATE.pan.x) / STATE.scale, y: (sy - STATE.pan.y) / STATE.scale }; }
+
+        function drawGrid(ctx, w, h) {
+            const isDark = document.documentElement.classList.contains('dark');
+            const cMajor = isDark ? '#475569' : '#94a3b8'; 
+            const cAxis = isDark ? '#cbd5e1' : '#1e293b'; 
+            const cText = isDark ? '#94a3b8' : '#475569';
+            let step = 100; if (STATE.scale > 2) step = 50; if (STATE.scale > 5) step = 10; if (STATE.scale < 0.5) step = 200;
+
+            const tl = screenToWorld(0, 0); const br = screenToWorld(w, h);
+            const startX = Math.floor(tl.x / step) * step; const endX = Math.ceil(br.x / step) * step;
+            const startY = Math.floor(tl.y / step) * step; const endY = Math.ceil(br.y / step) * step;
+
+            ctx.font = 'bold 11px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.lineWidth = 1;
+            ctx.setLineDash([]); // Grid siempre sólido
+
+            // Grid Lines
+            for (let x = startX; x <= endX; x += step) {
+                const sx = x * STATE.scale + STATE.pan.x;
+                ctx.beginPath(); ctx.strokeStyle = (Math.abs(x) < 0.1) ? 'transparent' : cMajor; 
+                ctx.moveTo(sx, 0); ctx.lineTo(sx, h); ctx.stroke();
+            }
+            for (let y = startY; y <= endY; y += step) {
+                const sy = y * STATE.scale + STATE.pan.y;
+                ctx.beginPath(); ctx.strokeStyle = (Math.abs(y) < 0.1) ? 'transparent' : cMajor;
+                ctx.moveTo(0, sy); ctx.lineTo(w, sy); ctx.stroke();
+            }
+            const origin = worldToScreen(0, 0);
+            if (origin.x >= 0 && origin.x <= w) { ctx.beginPath(); ctx.strokeStyle = cAxis; ctx.lineWidth = 2.5; ctx.moveTo(origin.x, 0); ctx.lineTo(origin.x, h); ctx.stroke(); }
+            if (origin.y >= 0 && origin.y <= h) { ctx.beginPath(); ctx.strokeStyle = cAxis; ctx.lineWidth = 2.5; ctx.moveTo(0, origin.y); ctx.lineTo(w, origin.y); ctx.stroke(); }
+
+            // TICKS (12px)
+            ctx.fillStyle = cText; const tickSize = 12; 
+            
+            for (let x = startX; x <= endX; x += step) {
+                if (Math.abs(x) < 0.1) continue;
+                const sx = x * STATE.scale + STATE.pan.x;
+                ctx.beginPath(); ctx.strokeStyle = cAxis; ctx.lineWidth = 1.5; let yPos = origin.y; if (yPos < 0) yPos = 0; if (yPos > h) yPos = h;
+                ctx.moveTo(sx, yPos - tickSize/2); ctx.lineTo(sx, yPos + tickSize/2); ctx.stroke();
+                let numY = origin.y + 12; if (numY < 20) numY = 20; if (numY > h - 20) numY = h - 20;
+                ctx.fillText(x.toString(), sx, numY);
+            }
+            ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+            for (let y = startY; y <= endY; y += step) {
+                if (Math.abs(y) < 0.1) continue;
+                const sy = y * STATE.scale + STATE.pan.y;
+                ctx.beginPath(); ctx.strokeStyle = cAxis; ctx.lineWidth = 1.5; let xPos = origin.x; if (xPos < 0) xPos = 0; if (xPos > w) xPos = w;
+                ctx.moveTo(xPos - tickSize/2, sy); ctx.lineTo(xPos + tickSize/2, sy); ctx.stroke();
+                let numX = origin.x - 12; if (numX < 30) numX = 30; if (numX > w - 10) numX = w - 10;
+                ctx.fillText((-y).toString(), numX, sy);
+            }
+        }
+
+        // --- LOOP ---
+        function loop() {
+            if (STATE.running) {
+                const now = performance.now(); const dt = (now - STATE.lastFrameTime) / 1000; STATE.lastFrameTime = now; STATE.t += dt;
+                const period = 1 / STATE.params.freq;
+                if (STATE.t - STATE.lastEmitTime >= period) { 
+                    STATE.waves.push({ 
+                        x: STATE.source.x, 
+                        y: STATE.source.y, 
+                        t_emit: STATE.t, 
+                        heard: false,
+                        vs_emit: STATE.params.vs  // GUARDAR VELOCIDAD DE EMISIÓN (INERCIA)
+                    }); 
+                    STATE.lastEmitTime = STATE.t; 
+                }
+                STATE.source.x += STATE.params.vs * dt;
+                emitParticles();
+                updateParticles(dt);
+                updateEngineSound();
+                
+                // FÍSICA VECTORIAL + INERCIA
+                STATE.waves = STATE.waves.filter(w => {
+                    const age = STATE.t - w.t_emit; const r = STATE.params.c * age;
+                    const dist = Math.hypot(w.x - STATE.observer.x, w.y - STATE.observer.y);
+                    if (Math.abs(r - dist) < 5 && !w.heard) {
+                        w.heard = true; STATE.observer.hit = 8; 
+                        
+                        // FIX: Use Emission Position (w.x, w.y) instead of Current Source Position
+                        const dx = STATE.observer.x - w.x; 
+                        const dy = STATE.observer.y - w.y;
+                        const distTotal = Math.hypot(dx, dy) || 1;
+                        
+                        const v_proj = w.vs_emit * (dx / distTotal);
+                        const f_obs = STATE.params.freq * (STATE.params.c / (STATE.params.c - v_proj));
+                        
+                        // FIX: Use Math.abs() to allow "supersonic" negative frequencies to be heard
+                        if(Math.abs(f_obs) > 0 && Math.abs(f_obs) < 20000) {
+                            // Intensidad base con decaimiento ~1/r^2 pero más fuerte
+                            const baseIntensity = 20000 / (dist * dist + 500);
+                            // Se recorta entre 0.25 y 1.0 para que nunca sea demasiado baja
+                            const intensity = Math.max(0.25, Math.min(1.0, baseIntensity));
+                            
+                            playPulse(
+                                Math.abs(f_obs) * 200 + 200,
+                                intensity
+                            );
+                        }
+                    }
+                    return r < 4000;
+                });
+                
+                // TELEMETRÍA (Tiempo Real)
+                const dx = STATE.observer.x - STATE.source.x;
+                const dy = STATE.observer.y - STATE.source.y;
+                const v_proj = STATE.params.vs * (dx / (Math.hypot(dx,dy)||1));
+                const f_ui = STATE.params.freq * (STATE.params.c / (STATE.params.c - v_proj));
+                
+                // Corrección Telemetría: Lambda Base del Medio
+                document.getElementById('calc-lambda').textContent = (STATE.params.c / STATE.params.freq).toFixed(1) + " m";
+                document.getElementById('calc-vrel').textContent = STATE.params.vs.toFixed(1) + " m/s";
+                
+                const ratio = Math.abs(f_ui / STATE.params.freq);
+                const displayF = Math.abs(f_ui).toFixed(2);
+                document.getElementById('calc-result').textContent = (Math.abs(STATE.params.vs) > STATE.params.c) ? "BOOM" : displayF + " Hz";
+                document.getElementById('observer-freq-disp').textContent = (Math.abs(STATE.params.vs) > STATE.params.c) ? "N/A" : displayF + " Hz";
+                
+                const bar = document.getElementById('doppler-bar');
+                if(ratio > 1) { bar.style.backgroundColor='#6366f1'; bar.style.width = Math.min(100, 50 + (ratio-1)*50) + '%'; }
+                else { bar.style.backgroundColor='#f43f5e'; bar.style.width = Math.max(5, 50 - (1-ratio)*50) + '%'; }
+                
+                // Oscilloscope data
+                STATE.lastObsFreq = Math.abs(f_ui);
+                STATE.oscilloData.push({ t: STATE.t, f: STATE.lastObsFreq });
+                if (STATE.oscilloData.length > 600) STATE.oscilloData.shift();
+                drawOscilloscope();
+                updateMachHUD();
+            } else { STATE.lastFrameTime = performance.now(); }
+
+            const w = canvas.width; const h = canvas.height;
+            const bg = getComputedStyle(document.body).getPropertyValue('--bg-canvas');
+            ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+            drawGrid(ctx, w, h);
+
+            ctx.save(); ctx.translate(STATE.pan.x, STATE.pan.y); ctx.scale(STATE.scale, STATE.scale);
+            
+            // Particles behind emitter
+            drawParticles(ctx);
+
+            ctx.lineWidth = CONFIG.waveWidth / STATE.scale;
+            ctx.setLineDash(CONFIG.waveStyle.map(x => x / STATE.scale)); 
+            
+            // Waves with Doppler color mapping
+            STATE.waves.forEach(w => {
+                const r = STATE.params.c * (STATE.t - w.t_emit);
+                const alpha = Math.max(0, 1 - r / 2000);
+                const dopplerCol = getDopplerColor(w.x, w.y, CONFIG.waveColor);
+                ctx.beginPath(); ctx.arc(w.x, w.y, r, 0, Math.PI * 2);
+                ctx.globalAlpha = alpha * 0.8;
+                ctx.strokeStyle = dopplerCol; ctx.stroke();
+                ctx.globalAlpha = 1;
+            });
+            
+            ctx.setLineDash([]); 
+
+            // Mach Cone
+            drawMachCone(ctx, STATE.source.x, STATE.source.y);
+
+            // Velocity vector arrow
+            if (Math.abs(STATE.params.vs) > 5) {
+                const arrowLen = STATE.params.vs * 0.3;
+                const ax = STATE.source.x + arrowLen;
+                const ay = STATE.source.y;
+                ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 3 / STATE.scale;
+                ctx.shadowColor = '#fbbf24'; ctx.shadowBlur = 8;
+                ctx.beginPath(); ctx.moveTo(STATE.source.x, STATE.source.y); ctx.lineTo(ax, ay); ctx.stroke();
+                // Arrowhead
+                const headLen = 12 / STATE.scale; const dir = STATE.params.vs > 0 ? 0 : Math.PI;
+                ctx.fillStyle = '#fbbf24'; ctx.beginPath();
+                ctx.moveTo(ax, ay);
+                ctx.lineTo(ax - Math.cos(dir - 0.4) * headLen, ay - Math.sin(dir - 0.4) * headLen);
+                ctx.lineTo(ax - Math.cos(dir + 0.4) * headLen, ay - Math.sin(dir + 0.4) * headLen);
+                ctx.closePath(); ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            if (STATE.source.type === 'car') drawCar(ctx, STATE.source.x, STATE.source.y, 0);
+            else if (STATE.source.type === 'jet') drawJet(ctx, STATE.source.x, STATE.source.y, 0);
+            else { 
+                ctx.fillStyle = CONFIG.waveColor; ctx.beginPath(); ctx.arc(STATE.source.x, STATE.source.y, 10, 0, Math.PI*2); ctx.fill(); 
+                ctx.shadowColor = CONFIG.waveColor; ctx.shadowBlur = 20; ctx.stroke(); ctx.shadowBlur=0;
+            }
+            drawMic(ctx, STATE.observer.x, STATE.observer.y);
+            ctx.restore();
+
+            // Scanline overlay for dark theme
+            if (document.documentElement.classList.contains('dark')) {
+                ctx.fillStyle = 'rgba(0,0,0,0.02)';
+                for (let sy = 0; sy < h; sy += 4) { ctx.fillRect(0, sy, w, 2); }
+            }
+            requestAnimationFrame(loop);
+        }
+
+        // --- INTERACTION (CON RESTRICCIÓN ORBITAL Y=0) ---
+        let dragTarget = null, lastTouchDist = 0;
+        
+        function handleStart(clientX, clientY) {
+            initAudio(); 
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            const clickPos = { x: x, y: y };
+            const srcScreen = worldToScreen(STATE.source.x, STATE.source.y);
+            const obsScreen = worldToScreen(STATE.observer.x, STATE.observer.y);
+            const touchRadius = 45; 
+
+            const dSrc = Math.hypot(clickPos.x - srcScreen.x, clickPos.y - srcScreen.y);
+            const dObs = Math.hypot(clickPos.x - obsScreen.x, clickPos.y - obsScreen.y);
+
+            if (dSrc < touchRadius) { dragTarget = 'source'; canvas.style.cursor = 'grabbing'; } 
+            else if (dObs < touchRadius) { dragTarget = 'observer'; canvas.style.cursor = 'grabbing'; } 
+            else { dragTarget = 'view'; canvas.style.cursor = 'move'; }
+            
+            STATE.lastMouse = { x: x, y: y };
+        }
+
+        function handleMove(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            if (!dragTarget) {
+                const srcScreen = worldToScreen(STATE.source.x, STATE.source.y);
+                const obsScreen = worldToScreen(STATE.observer.x, STATE.observer.y);
+                const hoverRadius = 45;
+                const dSrc = Math.hypot(x - srcScreen.x, y - srcScreen.y);
+                const dObs = Math.hypot(x - obsScreen.x, y - obsScreen.y);
+                canvas.style.cursor = (dSrc < hoverRadius || dObs < hoverRadius) ? 'grab' : 'default';
+                return;
+            }
+
+            const dx = x - STATE.lastMouse.x; 
+            const dy = y - STATE.lastMouse.y;
+
+            if (dragTarget === 'view') { 
+                STATE.pan.x += dx; 
+                STATE.pan.y += dy; 
+            } else {
+                const dwx = dx / STATE.scale; 
+                const dwy = dy / STATE.scale;
+                
+                if (dragTarget === 'source') { 
+                    STATE.source.x += dwx; 
+                    STATE.source.y = 0; // RESTRICCIÓN ORBITAL ESTRICTA (Solo Eje X)
+                }
+                if (dragTarget === 'observer') { 
+                    STATE.observer.x += dwx; 
+                    STATE.observer.y += dwy; 
+                }
+            }
+            STATE.lastMouse = { x: x, y: y };
+        }
+
+        function handleEnd() { dragTarget = null; canvas.style.cursor = 'default'; }
+
+        canvas.addEventListener('mousedown', e => handleStart(e.clientX, e.clientY));
+        window.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY)); 
+        window.addEventListener('mouseup', handleEnd);
+        
+        canvas.addEventListener('touchstart', e => {
+            e.preventDefault();
+            if (e.touches.length === 1) handleStart(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+        
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if (e.touches.length === 1) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+        
+        canvas.addEventListener('touchend', handleEnd);
+
+        canvas.addEventListener('wheel', e => {
+            e.preventDefault(); const zoomIntensity = 0.1;
+            const factor = Math.exp(e.deltaY > 0 ? -zoomIntensity : zoomIntensity);
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left; const mouseY = e.clientY - rect.top;
+            const mouseW = { x: (mouseX - STATE.pan.x)/STATE.scale, y: (mouseY - STATE.pan.y)/STATE.scale };
+            STATE.scale *= factor; STATE.scale = Math.max(0.1, Math.min(STATE.scale, 10)); 
+            STATE.pan.x = mouseX - mouseW.x * STATE.scale; 
+            STATE.pan.y = mouseY - mouseW.y * STATE.scale;
+        }, { passive: false });
+        
+        // --- UI LINKING ---
+        function updateSliderFill(el) {
+            const val = (el.value - el.min) / (el.max - el.min) * 100;
+            const color = el.style.color || '#3b82f6';
+            const track = getComputedStyle(document.body).getPropertyValue('--slider-track');
+            el.style.background = `linear-gradient(to right, ${color} ${val}%, ${track} ${val}%)`;
+        }
+
+        const linkSlider = (id, param, dispId, unit) => {
+            const el = document.getElementById(id); updateSliderFill(el);
+            el.addEventListener('input', (e) => { STATE.params[param] = parseFloat(e.target.value); document.getElementById(dispId).innerText = STATE.params[param] + " " + unit; updateSliderFill(e.target); });
+        };
+        linkSlider('input-vs', 'vs', 'val-vs', 'm/s'); linkSlider('input-freq', 'freq', 'val-freq', 'Hz'); linkSlider('input-c', 'c', 'val-c', 'm/s');
+        
+        // Volume Slider
+        const volSlider = document.getElementById('input-vol');
+        updateSliderFill(volSlider);
+        volSlider.addEventListener('input', (e) => {
+            STATE.volume = parseFloat(e.target.value) / 100; // Normalize to 0-1
+            document.getElementById('val-vol').innerText = e.target.value + '%';
+            updateSliderFill(e.target);
+        });
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            ['input-vs', 'input-freq', 'input-c', 'input-vol'].forEach(id => updateSliderFill(document.getElementById(id)));
+        });
+
+        window.setSourceType = (type) => { 
+            STATE.source.type = type; 
+            document.querySelectorAll('#btn-point, #btn-car, #btn-jet').forEach(b => {
+                 b.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-1', 'dark:ring-offset-slate-900');
+                 const icon = b.querySelector('i') || b.querySelector('svg');
+                 if(icon) icon.setAttribute('class', "w-5 h-5 text-slate-500");
+            });
+            const active = document.getElementById('btn-'+type);
+            active.classList.add('ring-2', 'ring-blue-500', 'ring-offset-1', 'dark:ring-offset-slate-900');
+            const activeIcon = active.querySelector('i') || active.querySelector('svg');
+            if(activeIcon) activeIcon.setAttribute('class', "w-5 h-5 text-blue-500");
+            // Start/stop engine sound
+            if (type === 'car' || type === 'jet') {
+                if (CONFIG.audioEnabled) { initAudio(); startEngine(type); }
+            } else { stopEngine(); }
+        };
+
+        document.getElementById('btn-toggle').addEventListener('click', () => {
+            STATE.running = !STATE.running;
+            const icon = document.getElementById('icon-playpause'); const txt = document.getElementById('text-playpause');
+            const status = document.getElementById('sim-status');
+            if(STATE.running) { 
+                icon.setAttribute('data-lucide', 'pause'); 
+                txt.innerText = "Pausar"; 
+                status.innerText = "LIVE";
+                status.classList.remove('bg-slate-100', 'text-slate-600', 'border-slate-200');
+                status.classList.add('bg-emerald-100', 'text-emerald-700', 'border-emerald-200', 'animate-pulse');
+                STATE.lastFrameTime = performance.now(); 
+            } else { 
+                icon.setAttribute('data-lucide', 'play'); 
+                txt.innerText = "Reanudar"; 
+                status.innerText = "PAUSA"; 
+                status.classList.remove('bg-emerald-100', 'text-emerald-700', 'border-emerald-200', 'animate-pulse');
+                status.classList.add('bg-slate-100', 'text-slate-600', 'border-slate-200');
+            }
+            lucide.createIcons();
+        });
+        document.getElementById('btn-reset').addEventListener('click', () => { 
+            STATE.waves = []; STATE.source.x = 0; STATE.params.vs = 0; STATE.particles = []; STATE.oscilloData = [];
+            const inp = document.getElementById('input-vs'); inp.value = 0; updateSliderFill(inp);
+            document.getElementById('val-vs').innerText = "0 m/s";
+            updateMachHUD();
+            stopEngine();
+        });
+
+        window.toggleModal = id => { const m = document.getElementById('modal-'+id); if(m.classList.contains('hidden')) { m.classList.remove('hidden'); setTimeout(()=>m.classList.add('modal-active'),10); } else { m.classList.remove('modal-active'); setTimeout(()=>m.classList.add('hidden'),300); }};
+
+        function resizeCanvas() { const c=document.getElementById('canvas-container'); canvas.width=c.clientWidth; canvas.height=c.clientHeight; if(STATE.pan.x===0) { STATE.pan.x=canvas.width/2; STATE.pan.y=canvas.height/2; }}
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('load', () => { 
+            lucide.createIcons(); resizeCanvas(); STATE.lastFrameTime = performance.now(); requestAnimationFrame(loop);
+            const setupResizer = (resizer, panel, side) => {
+                resizer.addEventListener('mousedown', (e) => { e.preventDefault(); document.body.style.cursor = 'col-resize';
+                    const move = (ev) => { const w = side==='left' ? ev.clientX : window.innerWidth - ev.clientX; if(w > 250 && w < 600) panel.style.width = w + 'px'; resizeCanvas(); };
+                    const stop = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); document.body.style.cursor = ''; };
+                    window.addEventListener('mousemove', move); window.addEventListener('mouseup', stop);
+                });
+            };
+            setupResizer(document.getElementById('drag-left'), document.getElementById('left-panel'), 'left');
+            setupResizer(document.getElementById('drag-right'), document.getElementById('right-panel'), 'right');
+        });
+        window.zoomIn = () => { STATE.scale *= 1.2; STATE.pan.x -= canvas.width*0.1; STATE.pan.y -= canvas.height*0.1; };
+        window.zoomOut = () => { STATE.scale /= 1.2; STATE.pan.x += canvas.width*0.08; STATE.pan.y += canvas.height*0.08; };
+        window.resetView = () => { STATE.scale = 1; STATE.pan.x = canvas.width/2; STATE.pan.y = canvas.height/2; };
+    </script>
 </body>
 </html>
